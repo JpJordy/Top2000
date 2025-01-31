@@ -6,7 +6,7 @@ namespace Top2000_API.Models
     {
         public int SongId { get; set; }
         public int ArtiestId { get; set; }
-        public string Titel { get; set; }
+        public required string Titel { get; set; }
         public int Jaar { get; set; }
         public string? Afbeelding { get; set; }
         public string? Lyrics { get; set; }

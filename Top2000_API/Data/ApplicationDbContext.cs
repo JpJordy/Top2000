@@ -14,7 +14,6 @@ namespace Top2000_API.Data
 
         public DbSet<Artiest> Artiesten { get; set; } = null!;
         public DbSet<Song> Songs { get; set; } = null!;
-        public DbSet<Top2000Jaar> Top2000Jaren { get; set; } = null!;
         public DbSet<Lijst> Lijsten { get; set; } = null!;
     }
 

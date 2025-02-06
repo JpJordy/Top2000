@@ -12,8 +12,8 @@ using Top2000_API.Data;
 namespace Top2000_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250131132634_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250206140513_RemovedYearTable")]
+    partial class RemovedYearTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -257,20 +257,18 @@ namespace Top2000_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LijstId"));
 
+                    b.Property<int>("Jaar")
+                        .HasColumnType("int");
+
                     b.Property<int>("Positie")
                         .HasColumnType("int");
 
                     b.Property<int>("SongId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Top2000JaarId")
-                        .HasColumnType("int");
-
                     b.HasKey("LijstId");
 
                     b.HasIndex("SongId");
-
-                    b.HasIndex("Top2000JaarId");
 
                     b.ToTable("Lijsten");
                 });
@@ -307,22 +305,6 @@ namespace Top2000_API.Migrations
                     b.HasIndex("ArtiestId");
 
                     b.ToTable("Songs");
-                });
-
-            modelBuilder.Entity("Top2000_API.Models.Top2000Jaar", b =>
-                {
-                    b.Property<int>("Top2000JaarId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Top2000JaarId"));
-
-                    b.Property<int>("Jaar")
-                        .HasColumnType("int");
-
-                    b.HasKey("Top2000JaarId");
-
-                    b.ToTable("Top2000Jaren");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -384,15 +366,7 @@ namespace Top2000_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Top2000_API.Models.Top2000Jaar", "Top2000Jaar")
-                        .WithMany("Lijsten")
-                        .HasForeignKey("Top2000JaarId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Song");
-
-                    b.Navigation("Top2000Jaar");
                 });
 
             modelBuilder.Entity("Top2000_API.Models.Song", b =>
@@ -412,11 +386,6 @@ namespace Top2000_API.Migrations
                 });
 
             modelBuilder.Entity("Top2000_API.Models.Song", b =>
-                {
-                    b.Navigation("Lijsten");
-                });
-
-            modelBuilder.Entity("Top2000_API.Models.Top2000Jaar", b =>
                 {
                     b.Navigation("Lijsten");
                 });

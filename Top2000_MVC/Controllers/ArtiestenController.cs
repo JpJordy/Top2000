@@ -2,7 +2,7 @@
 
 namespace Top2000_MVC.Controllers
 {
-    public class ProgrammeringController : Controller
+    public class ArtiestenController : Controller
     {
         public IActionResult Index()
         {

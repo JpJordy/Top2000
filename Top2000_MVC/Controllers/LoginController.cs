@@ -2,7 +2,7 @@
 
 namespace Top2000_MVC.Controllers
 {
-    public class GemistController : Controller
+    public class LoginController : Controller
     {
         public IActionResult Index()
         {

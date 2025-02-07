@@ -2,7 +2,7 @@
 
 namespace Top2000_MVC.Controllers
 {
-    public class PodcastsController : Controller
+    public class LiedjesController : Controller
     {
         public IActionResult Index()
         {

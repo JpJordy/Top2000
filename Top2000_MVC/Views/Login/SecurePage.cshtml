@@ -1,0 +1,9 @@
+﻿@{
+    ViewData["Title"] = "Beveiligde Pagina";
+}
+
+<h2>Welkom op de beveiligde pagina!</h2>
+
+<p>Je bent ingelogd als @User.Identity.Name.</p>
+
+<a class="btn btn-danger" asp-action="Logout" asp-controller="Login">Uitloggen</a>

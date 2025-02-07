@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+<style>
+body{
+        background: #22282E;
+}
+
+    .login-container {
+        background: #1e1e1e; /* Donkergrijze achtergrond voor de login-box */
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        width: 400px;
+    }
+
+    .form-control {
+        background-color: #333;
+        color: white;
+        border: 1px solid #555;
+    }
+
+        .form-control::placeholder {
+            color: #aaa;
+        }
+
+    .btn-danger {
+        background-color: red;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: darkred;
+        }
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="login-container">
+        <h3 class="text-center mb-4">Login</h3> <!-- Login titel bovenaan -->
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <form asp-action="Login" method="post">
+            <div class="form-group mb-3">
+                <label for="username" class="fw-bold">Gebruikersnaam</label>
+                <input type="text" id="username" name="Username" class="form-control" required />
+            </div>
+            <div class="form-group mb-3">
+                <label for="password" class="fw-bold">Wachtwoord</label>
+                <input type="password" id="password" name="Password" class="form-control" required />
+            </div>
+            <button type="submit" class="btn btn-danger w-100">Inloggen</button>
+            <div class="text-center mt-2">
+                <a href="#" class="text-light">Wachtwoord vergeten?</a>
+            </div>
+        </form>
+    </div>
+</div>

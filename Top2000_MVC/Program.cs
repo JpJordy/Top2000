@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 namespace Top2000_MVC
 {
     public class Program
@@ -6,7 +8,18 @@ namespace Top2000_MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Voeg authenticatie toe (Cookies)
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Login/Login"; // Verwijst naar LoginController
+                    options.AccessDeniedPath = "/Login/AccessDenied";
+                });
+
+            // Voeg autorisatie toe
+            builder.Services.AddAuthorization();
+
+            // Voeg controllers en views toe
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
@@ -15,7 +28,6 @@ namespace Top2000_MVC
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
@@ -24,6 +36,8 @@ namespace Top2000_MVC
 
             app.UseRouting();
 
+            // **Gebruik Authenticatie en Autorisatie**
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(

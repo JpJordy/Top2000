@@ -1,5 +1,110 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPO Radio 2 Frequenties</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #22282E;
+            color: white;
+        }
+
+        .contact-box {
+            background-color: #f4f4f4; /* Andere achtergrondkleur */
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+            .contact-box:hover {
+                background-color: #f8d7da;
+                transform: translateY(-5px);
+            }
+
+        .contact-btn {
+            background-color: #D32F2F; /* Andere kleur voor de knoppen */
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            text-decoration: none;
+            margin-bottom: 10px; /* Ruimte tussen de knoppen */
+        }
+
+            .contact-btn:hover {
+                background-color: darkred;
+            }
+
+        .contact-box img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-4 d-flex">
+                <div class="contact-box w-100">
+                    <h2>FREQUENTIES</h2>
+                    <ul>
+                        <li>Friesland: 88.0 MHz en 92.9 MHz</li>
+                        <li>Groningen: 88.0 MHz</li>
+                        <li>Drenthe: 88.0 MHz</li>
+                        <li>Overijssel: 88.0 MHz en 104.6 MHz</li>
+                        <li>Gelderland: 88.2 MHz, 92.6 MHz en 104.5 MHz</li>
+                        <li>Flevoland: 88.0 MHz en 92.6 MHz</li>
+                        <li>Utrecht: 92.6 MHz</li>
+                        <li>Noord-Holland: 92.6 MHz en 92.9 MHz</li>
+                        <li>Zuid-Holland: 92.6 MHz</li>
+                        <li>Zeeland: 92.6 MHz en 97.8 MHz</li>
+                        <li>Noord-Brabant: 88.2 MHz en 92.6 MHz</li>
+                        <li>Limburg: 88.2 MHz, 93.4 MHz en 97.2 MHz</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex">
+                <div class="contact-box w-100">
+                    <h2>VOLG NPO RADIO 2</h2>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>Instagram</li>
+                        <li>YouTube</li>
+                        <li>Spotify</li>
+                    </ul>
+                    <h3>DOWNLOAD NPO RADIO 2 APP</h3>
+                    <ul>
+                        <li>Live luisteren/kijken naar NPO Radio 2</li>
+                        <li>Gratis berichtje sturen naar de studio</li>
+                        <li>Laatste (muziek)nieuws</li>
+                        <li>Gidsinformatie en terugluisteren</li>
+                        <li>Top 2000 bekijken</li>
+                    </ul>
+                    <p><a href="#" class="contact-btn">iPhone download</a></p>
+                    <p></p>
+                    <p><a href="#" class="contact-btn">Android download</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

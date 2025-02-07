@@ -2,7 +2,7 @@
 
 namespace Top2000_MVC.Controllers
 {
-    public class NieuwsController : Controller
+    public class RegistrerenController : Controller
     {
         public IActionResult Index()
         {

@@ -14,12 +14,12 @@ public class LoginController : Controller
 
     [HttpPost]
     public async Task<IActionResult> Login(string Username, string Password)
-    {
+{
         // Simpele hardcoded validatie (Vervang dit met database-check)
         if (Username == "admin" && Password == "password")
-        {
+    {
             var claims = new List<Claim>
-            {
+        {
                 new Claim(ClaimTypes.Name, Username),
                 new Claim(ClaimTypes.Role, "Admin") // Rol voor autorisatie
             };
@@ -37,8 +37,8 @@ public class LoginController : Controller
         }
 
         ViewBag.Error = "Ongeldige inloggegevens";
-        return View();
-    }
+            return View();
+        }
 
     public async Task<IActionResult> Logout()
     {

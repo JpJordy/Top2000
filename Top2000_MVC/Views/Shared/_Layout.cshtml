@@ -43,9 +43,16 @@
             padding: 5px 10px;
         }
 
+            .nav-item .nav-link.active {
+                text-decoration: underline;
+                text-decoration-color: red;
+                text-decoration-thickness: 3px;
+                text-underline-offset: 3px;
+            }
+
         .nav-link {
             color: white !important;
-            transition: background-color 0.3s, color 0.3s;
+            transition: background-color 0.2s, color 0.2s;
             padding: 5px;
             border-radius: 5px;
         }
@@ -53,6 +60,7 @@
             .nav-link:hover, .dropdown-item:hover {
                 background-color: red;
                 color: white;
+                text-decoration: none !important;
             }
 
         .nav-item.dropdown:hover .dropdown-menu {
@@ -97,10 +105,22 @@
                     </a>
                     <div class="collapse navbar-collapse" id="navbarNav">
                         <ul class="navbar-nav">
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Nieuws" asp-action="Index">Nieuws</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Podcasts" asp-action="Index">Podcasts</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-area="" asp-controller="Programmering" asp-action="Index">Programmering</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" ? "active" : "")"
+                                   asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Nieuws" ? "active" : "")"
+                                   asp-area="" asp-controller="Nieuws" asp-action="Index">Nieuws</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Podcasts" ? "active" : "")"
+                                   asp-area="" asp-controller="Podcasts" asp-action="Index">Podcasts</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Programmering" ? "active" : "")"
+                                   asp-area="" asp-controller="Programmering" asp-action="Index">Programmering</a>
+                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" asp-area="" asp-controller="Top2000" asp-action="Index" role="button">Top 2000</a>
                                 <ul class="dropdown-menu">

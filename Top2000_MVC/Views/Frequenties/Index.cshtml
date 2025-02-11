@@ -9,19 +9,21 @@
         body {
             background-color: #22282E;
             color: white;
+            font-family: 'Arial', sans-serif;
         }
 
         .contact-box {
-            background-color: #f4f4f4; /* Andere achtergrondkleur */
+            background-color: #f4f4f4;
             color: black;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
             transition: background-color 0.3s, transform 0.3s;
-            min-height: 400px;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
             .contact-box:hover {
@@ -29,16 +31,22 @@
                 transform: translateY(-5px);
             }
 
+            .contact-box h2 {
+                font-size: 1.8rem;
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
+
         .contact-btn {
-            background-color: #D32F2F; /* Andere kleur voor de knoppen */
+            background-color: #D32F2F;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
             text-decoration: none;
-            margin-bottom: 10px; /* Ruimte tussen de knoppen */
+            margin-top: 20px;
         }
 
             .contact-btn:hover {
@@ -49,18 +57,56 @@
             width: 100px;
             height: auto;
             margin-bottom: 10px;
+            border-radius: 50%;
+            border: 2px solid #D32F2F;
+            padding: 8px;
         }
 
         ul {
             list-style-type: none;
             padding-left: 0;
+            font-size: 1rem;
+            line-height: 1.6;
         }
+
+            ul li {
+                margin: 5px 0;
+            }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .row {
+            margin-bottom: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+            .header h1 {
+                font-size: 2.5rem;
+                font-weight: bold;
+                margin-bottom: 20px;
+            }
+
+            .header p {
+                font-size: 1.2rem;
+            }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+
+    <div class="header">
+        <h1>Ontdek de Frequenties van NPO Radio 2</h1>
+        <p>Luister naar de beste muziek op de juiste frequentie in jouw regio.</p>
+    </div>
+
+    <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-4 d-flex">
+            <div class="col-md-6 d-flex">
                 <div class="contact-box w-100">
                     <h2>FREQUENTIES</h2>
                     <ul>
@@ -77,29 +123,7 @@
                         <li>Noord-Brabant: 88.2 MHz en 92.6 MHz</li>
                         <li>Limburg: 88.2 MHz, 93.4 MHz en 97.2 MHz</li>
                     </ul>
-                </div>
-            </div>
-            <div class="col-md-4 d-flex">
-                <div class="contact-box w-100">
-                    <h2>VOLG NPO RADIO 2</h2>
-                    <ul>
-                        <li>Facebook</li>
-                        <li>Twitter</li>
-                        <li>Instagram</li>
-                        <li>YouTube</li>
-                        <li>Spotify</li>
-                    </ul>
-                    <h3>DOWNLOAD NPO RADIO 2 APP</h3>
-                    <ul>
-                        <li>Live luisteren/kijken naar NPO Radio 2</li>
-                        <li>Gratis berichtje sturen naar de studio</li>
-                        <li>Laatste (muziek)nieuws</li>
-                        <li>Gidsinformatie en terugluisteren</li>
-                        <li>Top 2000 bekijken</li>
-                    </ul>
-                    <p><a href="#" class="contact-btn">iPhone download</a></p>
-                    <p></p>
-                    <p><a href="#" class="contact-btn">Android download</a></p>
+                    <a href="#" class="contact-btn">Bekijk meer frequenties</a>
                 </div>
             </div>
         </div>

@@ -55,16 +55,16 @@
         .nav-link {
             color: white !important;
             transition: background-color 0.2s, color 0.2s, border 0.2s;
-            padding: 5px 15px; /* Verhoog padding voor meer ruimte */
+            padding: 5px 15px;
             border-radius: 5px;
-            border: 2px solid transparent; /* Transparante border standaard */
+            border: 2px solid transparent;
         }
 
             .nav-link:hover, .dropdown-item:hover {
                 background-color: red;
                 color: white;
                 text-decoration: none !important;
-                border-color: red; /* Verander de borderkleur bij hover */
+                border-color: red;
             }
 
         .nav-item.dropdown:hover .dropdown-menu {
@@ -98,9 +98,8 @@
                     text-decoration: underline;
                 }
 
-        /* Voeg de knoppen aan de rechterkant toe met de juiste border */
         .navbar-nav.ms-auto .nav-link {
-            border: 1px solid red; /* Geef de knoppen een witte border */
+            border: 1px solid red;
         }
     </style>
 </head>
@@ -127,16 +126,18 @@
                                    asp-area="" asp-controller="Artiesten" asp-action="Index">Artiesten</a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Top2000" ? "active" : "")"
-                                   asp-area="" asp-controller="Top2000" asp-action="Index" role="button">Top 2000</a>
-                                <ul class="dropdown-menu">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Top 2000
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Top2000" asp-action="Index">Top 2000 Lijst</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Contact" asp-action="Index">Contact</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="Frequenties" asp-action="Index">Frequenties</a></li>
                                     <li><a class="dropdown-item" asp-area="" asp-controller="VolgRadio2" asp-action="Index">Volg NPO Radio 2</a></li>
                                 </ul>
                             </li>
+
                         </ul>
-                        <!-- Voeg de login en register knoppen toe aan de rechterkant -->
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
@@ -154,14 +155,6 @@
     <div class="container">
         <main role="main" class="pb-3">@RenderBody()</main>
     </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            <a href="https://npo.nl/overnpo/algemene-voorwaarden/algemene-voorwaarden-online" target="_blank">Algemene voorwaarden</a>
-            <a href="https://npo.nl/overnpo/privacy-en-security" target="_blank">Privacybeleid</a>
-            <a href="https://cookies.nporadio2.nl/sites/NPO/nporadio2.nl/settings.html?version=v3.1.14-y0mmh" target="_blank">Cookiebeleid</a>
-        </div>
-    </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

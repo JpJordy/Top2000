@@ -1,5 +1,149 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NPO Radio 2 Volg</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #22282E;
+            color: white;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1;
+            margin-top: 50px;
+        }
+
+        .contact-box {
+            background-color: #f4f4f4;
+            color: black;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            transition: background-color 0.3s, transform 0.3s;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+            .contact-box:hover {
+                background-color: #f8d7da;
+                transform: translateY(-5px);
+            }
+
+            .contact-box h2, .contact-box h3 {
+                margin-bottom: 20px;
+                font-size: 2rem;
+                font-weight: bold;
+            }
+
+            .contact-box ul {
+                list-style-type: none;
+                padding-left: 0;
+                font-size: 1.2rem;
+                line-height: 1.6;
+            }
+
+                .contact-box ul li {
+                    margin-bottom: 16px;
+                }
+
+        .contact-btn {
+            background-color: #D32F2F;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.2s;
+            text-decoration: none;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+            .contact-btn:hover {
+                background-color: darkred;
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+                transform: translateY(-3px);
+            }
+
+            .contact-btn:active {
+                transform: translateY(1px);
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            }
+
+        .contact-box img {
+            width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            border: 3px solid #D32F2F;
+            padding: 8px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+            .header h1 {
+                font-size: 3rem;
+                font-weight: bold;
+                color: white;
+            }
+
+            .header p {
+                font-size: 1.5rem;
+            }
+
+        .contact-box p {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Volg NPO Radio 2</h1>
+        <p>Blijf altijd op de hoogte via onze sociale kanalen en apps!</p>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6 d-flex">
+                <div class="contact-box w-100">
+                    <h2>Sociale Media</h2>
+                    <ul>
+                        <li><a href="#" class="contact-btn">Facebook</a></li>
+                        <li><a href="#" class="contact-btn">Twitter</a></li>
+                        <li><a href="#" class="contact-btn">Instagram</a></li>
+                        <li><a href="#" class="contact-btn">YouTube</a></li>
+                        <li><a href="#" class="contact-btn">Spotify</a></li>
+                    </ul>
+                    <h3>Download de NPO Radio 2 App</h3>
+                    <ul>
+                        <li>Live luisteren/kijken naar NPO Radio 2</li>
+                        <li>Gratis berichtje sturen naar de studio</li>
+                        <li>Laatste (muziek)nieuws</li>
+                        <li>Gidsinformatie en terugluisteren</li>
+                    </ul>
+                    <p><a href="#" class="contact-btn">iPhone Download</a></p>
+                    <p><a href="#" class="contact-btn">Android Download</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

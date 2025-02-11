@@ -21,6 +21,8 @@ namespace Top2000_MVC
 
             // Voeg controllers en views toe
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpClient();
+
 
             var app = builder.Build();
 

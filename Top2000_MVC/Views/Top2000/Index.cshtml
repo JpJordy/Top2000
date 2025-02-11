@@ -1,5 +1,164 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    var songs = ViewBag.Songs as List<Top2000_MVC.Models.Top2000Song>;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
 }
+
+<div class="song-list-container">
+    <div class="song-list">
+        @foreach (var song in songs)
+        {
+            var durationMinutes = song.DurationMs / 60000;
+            var durationSeconds = (song.DurationMs % 60000) / 1000;
+
+            <div class="song-item">
+                <img src="@song.Afbeelding" alt="Album cover" class="song-image" />
+                <div class="song-details">
+                    <div class="song-title">@song.Titel</div>
+                    <div class="song-artist">@song.Artiest?.Naam</div>
+                </div>
+                <div class="song-year">@song.Jaar</div>
+                <div class="song-duration">
+                    @String.Format("{0:D2}:{1:D2}", durationMinutes, durationSeconds)
+                </div>
+                @if (!string.IsNullOrEmpty(song.Youtube))
+                {
+                    <a href="@song.Youtube" target="_blank" class="youtube-link">▶</a>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="pagination-container">
+        @if (currentPage > 1)
+        {
+            <a href="@Url.Action("Index", new { page = currentPage - 1 })" class="previous-page-button">
+                Vorige pagina
+            </a>
+        }
+        @if (currentPage < totalPages)
+        {
+            <a href="@Url.Action("Index", new { page = currentPage + 1 })" class="next-page-button">
+                Volgende pagina
+            </a>
+        }
+    </div>
+
+    <div class="page-info">
+        @currentPage / @totalPages
+    </div>
+</div>
+
+<style>
+    .song-list-container {
+        width: 100%;
+        height: 84vh;
+        background-color: #1e1e1e;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        border-bottom-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+
+    .song-list {
+        width: 100%;
+        max-width: 800px;
+        color: white;
+        font-family: Arial, sans-serif;
+        padding: 10px;
+        display: block; 
+    }
+
+    .song-item {
+        display: flex;
+        align-items: center;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        background: #252525;
+        transition: background 0.3s, transform 0.3s;
+        cursor: pointer;
+        width: 100%;
+        max-width: 800px;
+    }
+
+
+        .song-item:hover {
+            background: #353535;
+            transform: scale(1.02);
+        }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 5px;
+    }
+
+    .previous-page-button,
+    .next-page-button {
+        display: inline-block;
+        padding: 10px 20px;
+        color: white !important;
+        transition: background-color 0.2s, color 0.2s, border 0.2s;
+        text-decoration: none;
+        border-radius: 5px;
+        border: 2px solid red;
+        text-align: center;
+    }
+
+        .previous-page-button:hover,
+        .next-page-button:hover {
+            background-color: red;
+            color: white;
+            text-decoration: none !important;
+            border-color: red;
+        }
+
+    .song-image {
+        width: 70px;
+        height: 70px;
+        border-radius: 5px;
+        margin-right: 15px;
+    }
+
+    .song-details {
+        flex-grow: 1;
+    }
+
+    .song-title {
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .song-artist {
+        font-size: 14px;
+        color: #b3b3b3;
+    }
+
+    .song-year {
+        margin-right: 20px;
+        color: #b3b3b3;
+    }
+
+    .song-duration {
+        margin-right: 10px;
+    }
+
+    .youtube-link {
+        text-decoration: none;
+        font-size: 18px;
+        color: white;
+    }
+
+    .page-info {
+        color: white;
+        font-size: 16px;
+        margin-top: 5px;
+        text-align: center;
+    }
+</style>

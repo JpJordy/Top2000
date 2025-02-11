@@ -36,14 +36,14 @@ namespace Top2000_MVC.Controllers
             if (apiResponse == null || apiResponse.songs == null)
             {
                 Console.WriteLine("API response is null or does not contain 'songs'.");
-                Console.WriteLine($"Response Content: {json}");  // Log de inhoud van de response om te zien wat wordt geretourneerd
-                ViewBag.Songs = new List<Top2000Song>(); // Lege lijst
-                ViewBag.TotalPages = 1; // Zorg ervoor dat TotalPages altijd een waarde heeft
+                Console.WriteLine($"Response Content: {json}"); 
+                ViewBag.Songs = new List<Top2000Song>();
+                ViewBag.TotalPages = 1; 
                 return View();
             }
 
-            var songs = apiResponse.songs.ToObject<List<Top2000Song>>();  // Gebruik 'songs' in kleine letters
-            var totalPages = (int)apiResponse.totalPages;  // Cast naar int
+            var songs = apiResponse.songs.ToObject<List<Top2000Song>>(); 
+            var totalPages = (int)apiResponse.totalPages;
 
             ViewBag.Songs = songs;
             ViewBag.TotalPages = totalPages;

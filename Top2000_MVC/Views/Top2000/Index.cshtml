@@ -15,7 +15,9 @@
                 <img src="@song.Afbeelding" alt="Album cover" class="song-image" />
                 <div class="song-details">
                     <div class="song-title">@song.Titel</div>
-                    <div class="song-artist">@song.Artiest?.Naam</div>
+                    <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = song.Artiest?.Naam, wiki = song.Artiest?.Wiki })">
+                        @song.Artiest?.Naam
+                    </a>
                 </div>
                 <div class="song-year">@song.Jaar</div>
                 <div class="song-duration">
@@ -62,6 +64,7 @@
         align-items: center;
         border-bottom-left-radius: 20px;
         border-bottom-right-radius: 20px;
+        overflow: hidden;
     }
 
     .song-list {
@@ -70,7 +73,7 @@
         color: white;
         font-family: Arial, sans-serif;
         padding: 10px;
-        display: block; 
+        display: block
     }
 
     .song-item {
@@ -86,10 +89,9 @@
         max-width: 800px;
     }
 
-
         .song-item:hover {
             background: #353535;
-            transform: scale(1.02);
+            transform: scale(1.01);
         }
 
     .pagination-container {
@@ -97,6 +99,7 @@
         justify-content: center;
         gap: 10px;
         margin-top: 5px;
+        flex-wrap: wrap;
     }
 
     .previous-page-button,
@@ -109,6 +112,9 @@
         border-radius: 5px;
         border: 2px solid red;
         text-align: center;
+        font-size: 1rem;
+        min-width: 120px;
+        box-sizing: border-box;
     }
 
         .previous-page-button:hover,
@@ -160,5 +166,9 @@
         font-size: 16px;
         margin-top: 5px;
         text-align: center;
+        font-size: 1rem;
+        padding: 10px;
+        width: 100%;
     }
+
 </style>

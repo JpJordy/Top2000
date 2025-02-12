@@ -1,0 +1,129 @@
+﻿@{
+    var artist = ViewBag.Artist as Top2000_MVC.Models.Top2000Artist;
+    var wiki = ViewBag.Wiki;
+}
+
+@if (artist != null)
+{
+    <div class="artist-info-container">
+        <div class="artist-header">
+            <div class="artist-photo">
+                <img src="@artist.Foto" alt="@artist.Naam" />
+            </div>
+            <div class="artist-details">
+                <h2 class="artist-name">@artist.Naam</h2>
+                <p class="artist-genres">
+                    <strong>Genres:</strong> @string.Join(", ", artist.Genres)
+                </p>
+                @if (!string.IsNullOrEmpty(wiki))
+                {
+                    <a href="@wiki" target="_blank" class="wiki-button">Bekijk Wiki</a>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>Geen gegevens gevonden voor deze artiest.</p>
+}
+
+<style>
+    .artist-info-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 40px;
+        background-color: #1e1e1e;
+        border-radius: 20px;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .artist-header {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        border-bottom: 2px solid #f0ad4e;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .artist-photo img {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .artist-details {
+        flex: 1;
+    }
+
+    .artist-name {
+        font-size: 36px;
+        font-weight: 700;
+        color: #f0ad4e;
+        margin-bottom: 10px;
+    }
+
+    .artist-genres {
+        font-size: 20px;
+        margin-bottom: 15px;
+        color: #dcdcdc;
+    }
+
+    .wiki-button {
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: transparent;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        border: 2px solid red;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+        .wiki-button:hover {
+            background-color: red;
+            color: white;
+        }
+
+    .artist-content {
+        display: flex;
+        gap: 30px;
+        margin-top: 20px;
+    }
+
+    .artist-bio, .artist-songs {
+        flex: 1;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+        .artist-bio h3, .artist-songs h3 {
+            color: #f0ad4e;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .artist-songs ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .artist-songs li {
+            font-size: 18px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+            .artist-songs li:last-child {
+                border-bottom: none;
+            }
+</style>

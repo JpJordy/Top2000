@@ -9,8 +9,6 @@ namespace Top2000_API.Models
         public string? Wiki { get; set; }
         public string? Biografie { get; set; }
         public string? Foto { get; set; }
-
-        public ICollection<Song> Songs { get; set; } = new List<Song>();
     }
 
 }

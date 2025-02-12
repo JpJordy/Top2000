@@ -40,9 +40,10 @@ namespace Top2000_API.Controllers
             public int ArtiestId { get; set; }
             public string? Naam { get; set; }
             public string? Wiki { get; set; }
-            public string? Biografie { get; set; }
             public string? Foto { get; set; }
+            public List<string>? Genres { get; set; }
         }
+
 
         private async Task<(string, int)> GetTrackInfoAsync(string songName, string artistName = null)
         {
@@ -52,8 +53,8 @@ namespace Top2000_API.Controllers
             var authUrl = "https://accounts.spotify.com/api/token";
             var authRequestBody = new FormUrlEncodedContent(new[]
             {
-        new KeyValuePair<string, string>("grant_type", "client_credentials")
-    });
+                new KeyValuePair<string, string>("grant_type", "client_credentials")
+            });
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(clientId + ":" + clientSecret)));
@@ -80,11 +81,67 @@ namespace Top2000_API.Controllers
             if (searchResult.tracks.items.Count > 0)
             {
                 var albumCoverUrl = searchResult.tracks.items[0].album.images[0].url;
-                var durationMs = searchResult.tracks.items[0].duration_ms;  
-                return (albumCoverUrl, durationMs);  
+                var durationMs = searchResult.tracks.items[0].duration_ms;
+                return (albumCoverUrl, durationMs);
             }
 
-            return ("No album cover found.", 0); 
+            return ("No album cover found.", 0);
+        }
+
+        private async Task<ArtistDTO> GetArtistInfoAsync(string artistName)
+        {
+            var clientId = "586a81230c214d4680827fa11c07357a"; 
+            var clientSecret = "8ea52916b7dc4ec8985fab26c97ca725"; 
+
+            var authUrl = "https://accounts.spotify.com/api/token";
+            var authRequestBody = new FormUrlEncodedContent(new[]
+            {
+        new KeyValuePair<string, string>("grant_type", "client_credentials")
+    });
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(clientId + ":" + clientSecret)));
+
+            var authResponse = await _httpClient.PostAsync(authUrl, authRequestBody);
+            var authResponseContent = await authResponse.Content.ReadAsStringAsync();
+            var authResponseJson = JsonConvert.DeserializeObject<dynamic>(authResponseContent);
+
+            var accessToken = authResponseJson.access_token;
+
+            var searchUrl = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessToken);
+
+            var searchResponse = await _httpClient.GetStringAsync(searchUrl);
+            var searchResult = JsonConvert.DeserializeObject<dynamic>(searchResponse);
+
+            if (searchResult.artists.items.Count == 0)
+            {
+                return null; 
+            }
+
+            var artist = searchResult.artists.items[0];
+            var artistId = artist.id; 
+            var artistImage = artist.images.Count > 0 ? (string)artist.images[0].url : null;
+            var genres = artist.genres.ToObject<List<string>>() ?? new List<string>();
+
+            return new ArtistDTO
+            {
+                Naam = artist.name,
+                Foto = artistImage,
+                Genres = genres,
+                Wiki = artist.wiki
+            };
+        }
+
+
+        [HttpGet("artist/{artistName}")]
+        public async Task<ActionResult<ArtistDTO>> GetArtist(string artistName)
+        {
+            var artistInfo = await GetArtistInfoAsync(artistName);
+            if (artistInfo == null) return NotFound("Artiest niet gevonden");
+
+            return Ok(artistInfo);
         }
 
         [HttpGet]
@@ -118,7 +175,6 @@ namespace Top2000_API.Controllers
                         ArtiestId = s.Artiest.ArtiestId,
                         Naam = s.Artiest.Naam,
                         Wiki = s.Artiest.Wiki,
-                        Biografie = s.Artiest.Biografie,
                         Foto = s.Artiest.Foto
                     }
                 };
@@ -165,7 +221,6 @@ namespace Top2000_API.Controllers
                     ArtiestId = song.Artiest.ArtiestId,
                     Naam = song.Artiest.Naam,
                     Wiki = song.Artiest.Wiki,
-                    Biografie = song.Artiest.Biografie,
                     Foto = song.Artiest.Foto
                 }
             };
@@ -205,7 +260,6 @@ namespace Top2000_API.Controllers
                         ArtiestId = song.Artiest.ArtiestId,
                         Naam = song.Artiest.Naam,
                         Wiki = song.Artiest.Wiki,
-                        Biografie = song.Artiest.Biografie,
                         Foto = song.Artiest.Foto
                     }
                 };

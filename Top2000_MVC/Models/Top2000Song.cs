@@ -13,15 +13,6 @@ namespace Top2000_MVC.Models
         public string? Youtube { get; set; }
         public int ArtiestId { get; set; }
         public Top2000Artist? Artiest { get; set; }
-        public int DurationMs { get; set; }  // Voeg deze regel toe
-    }
-
-    public class Top2000Artist
-    {
-        public int ArtiestId { get; set; }
-        public string Naam { get; set; } = string.Empty;
-        public string? Wiki { get; set; }
-        public string? Biografie { get; set; }
-        public string? Foto { get; set; }
+        public int DurationMs { get; set; }
     }
 }

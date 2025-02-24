@@ -1,25 +1,112 @@
-﻿<div id="slideshow">
-    <div>
-        <img src="~/Image/cafe.jpg" class="square-img">
+﻿@{
+    ViewBag.Title = "Slideshow";
+}
+<div id="slideshow-container">
+    <div id="slideshow">
+        <div>
+            <img src="~/Image/cafe.jpg" class="square-img">
+        </div>
+        <div>
+            <img src="~/Image/hart.jpg" class="square-img">
+        </div>
+        <div>
+            <img src="~/Image/mj.jpg" class="square-img">
+        </div>
     </div>
-    <div>
-        <img src="~/Image/hart.jpg" class="square-img">
-    </div>
-    <div>
-        <img src="~/Image/mj.jpg" class="square-img">
+    <!-- Witte box naast de slideshow met Top 5 van de Top 2000 -->
+    <div id="white-box">
+        <h2>Top 5 van de Top 2000</h2>
+        <ul>
+            <li>1. Queen - Bohemian Rhapsody</li>
+            <li>2. Eagles - Hotel California</li>
+            <li>3. Led Zeppelin - Stairway to Heaven</li>
+            <li>4. Billy Joel - Piano Man</li>
+            <li>5. Pink Floyd - Wish You Were Here</li>
+        </ul>
     </div>
 </div>
 
 <style>
-    #slideshow div {
-        width: 600px;
-        height: 400px;
+    body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to bottom, #22282e 50%, white 50%);
+        font-family: Arial, sans-serif;
     }
+
+    #slideshow-container {
+        margin-top: 40px;
+        margin-left: 0;
+        position: absolute;
+        left: 20%;
+        display: flex; /* Zorgt ervoor dat slideshow en box naast elkaar staan */
+        align-items: center; /* Verticaal centreren */
+    }
+
+    #slideshow {
+        width: 600px;
+        height: 450px;
+        padding: 0;
+        border-radius: 10px;
+        position: relative;
+    }
+
+        #slideshow > div {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+        }
+
+    /* Witte box aan de rechterkant van de afbeelding */
+    #white-box {
+        width: 600px;
+        height: 375px;
+        background-color: white;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+    }
+
+        #white-box h2 {
+            margin-top: 0;
+            font-size: 24px;
+        }
+
+        #white-box ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #white-box li {
+            font-size: 18px;
+            padding: 5px 0;
+        }
 
     .square-img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 15px;
+        border-radius: 10px;
     }
 </style>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var slideInterval = 5000;
+        var slides = $("#slideshow > div");
+        var currentIndex = 0;
+
+        slides.hide();
+        slides.first().show();
+
+        setInterval(function () {
+            $(slides[currentIndex]).hide();
+            currentIndex = (currentIndex + 1) % slides.length;
+            $(slides[currentIndex]).show();
+        }, slideInterval);
+    });
+</script>

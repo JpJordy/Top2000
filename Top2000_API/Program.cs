@@ -1,5 +1,6 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Top2000_API.Models;
 using Microsoft.OpenApi.Models; // Add this
 using Top2000_API.Data;
@@ -7,9 +8,10 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Set up the database context and connection string
+// 🔹 Database configuratie
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
@@ -21,7 +23,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// Add controllers and Swagger services
+// 🔹 Controllers en Swagger toevoegen
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -36,11 +38,11 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Middleware setup
+// 🔹 Middleware setup
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    app.UseSwagger(); // Enable Swagger
+    app.UseSwagger();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Top2000 API v1"));
 }
 else
@@ -48,8 +50,10 @@ else
     app.UseExceptionHandler("/Home/Error");
 }
 
+// 🔹 Nodige middleware toevoegen
 app.UseHttpsRedirection();
+app.UseRouting();  // ✅ BELANGRIJK: Routing inschakelen!
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers();  // ✅ BELANGRIJK: Controllers correct mappen
 
 app.Run();

@@ -1,4 +1,8 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace Top2000_MVC
 {
@@ -8,25 +12,27 @@ namespace Top2000_MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Voeg authenticatie toe (Cookies)
+            // ✅ Configureer HttpClient voor API-communicatie
+            builder.Services.AddHttpClient("ApiClient", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7020/api/"); // 🚨 Pas dit aan naar jouw API-poort
+            });
+
+            // ✅ Voeg authenticatie toe (Cookies)
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/Login/Login"; // Verwijst naar LoginController
+                    options.LoginPath = "/Login/Login";
                     options.AccessDeniedPath = "/Login/AccessDenied";
                 });
 
-            // Voeg autorisatie toe
             builder.Services.AddAuthorization();
-
-            // Voeg controllers en views toe
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient();
 
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -35,10 +41,9 @@ namespace Top2000_MVC
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
-            // **Gebruik Authenticatie en Autorisatie**
+            // ✅ Gebruik Authenticatie en Autorisatie
             app.UseAuthentication();
             app.UseAuthorization();
 

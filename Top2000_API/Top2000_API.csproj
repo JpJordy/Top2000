@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -26,5 +26,10 @@
     <Folder Include="Migrations\" />
     <Folder Include="Services\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Top2000_MVC\Top2000_MVC.csproj" />
+  </ItemGroup>
+
 
 </Project>

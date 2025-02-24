@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Top2000_API.Data;
 
@@ -11,9 +12,11 @@ using Top2000_API.Data;
 namespace Top2000_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250224103830_AddApplicationUser")]
+    partial class AddApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -163,9 +166,6 @@ namespace Top2000_API.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -217,8 +217,6 @@ namespace Top2000_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -366,13 +364,6 @@ namespace Top2000_API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Top2000_API.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Top2000_API.Models.ApplicationUser", null)
-                        .WithMany("Users")
-                        .HasForeignKey("ApplicationUserId");
-                });
-
             modelBuilder.Entity("Top2000_API.Models.Lijst", b =>
                 {
                     b.HasOne("Top2000_API.Models.Song", "Song")
@@ -393,11 +384,6 @@ namespace Top2000_API.Migrations
                         .IsRequired();
 
                     b.Navigation("Artiest");
-                });
-
-            modelBuilder.Entity("Top2000_API.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("Top2000_API.Models.Artiest", b =>

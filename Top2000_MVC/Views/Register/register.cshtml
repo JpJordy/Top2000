@@ -1,0 +1,70 @@
+﻿@model Top2000_MVC.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Registreren";
+}
+<style>
+    body {
+        background: #22282E;
+    }
+
+    .register-container {
+        background: #1e1e1e; /* Donkergrijze achtergrond voor de login-box */
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+        width: 400px;
+    }
+
+    .form-control {
+        background-color: #333;
+        color: white;
+        border: 1px solid #555;
+    }
+
+        .form-control::placeholder {
+            color: #aaa;
+        }
+
+    .btn-danger {
+        background-color: red;
+        border: none;
+    }
+
+        .btn-danger:hover {
+            background-color: darkred;
+        }
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="register-container">
+        <h3 class="text-center mb-4">Registreren</h3>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Error))
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <form asp-action="Register" method="post">
+            <div class="form-group mb-3">
+                <label for="username" class="fw-bold">Gebruikersnaam</label>
+                <input asp-for="Username" class="form-control" required />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="password" class="fw-bold">Wachtwoord</label>
+                <input asp-for="Password" type="password" class="form-control" required />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label for="confirm-password" class="fw-bold">Bevestig wachtwoord</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" required />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-danger w-100">Registreren</button>
+            <div class="text-center mt-2">
+                <a href="/Login/Login" class="text-light">Heb je al een account? Log in</a>
+            </div>
+        </form>
+    </div>
+</div>

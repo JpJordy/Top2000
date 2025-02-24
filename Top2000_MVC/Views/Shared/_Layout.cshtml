@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
     <link rel="stylesheet" href="~/Top2000_MVC.styles.css" asp-append-version="true">
     <style>
-        body {
-            color: white;
-        }
-
         .navbar-wrapper {
             background-color: #22282e;
         }
@@ -22,15 +18,6 @@
             display: flex;
             align-items: center;
             padding: 10px 0;
-        }
-
-            .navbar .container-fluid {
-                display: flex;
-                align-items: center;
-            }
-
-        .navbar-logo {
-            margin-right: 20px;
         }
 
             .navbar-logo img {
@@ -60,43 +47,28 @@
             border: 2px solid transparent;
         }
 
-            .nav-link:hover, .dropdown-item:hover {
+            .nav-link:hover {
                 background-color: red;
                 color: white;
                 text-decoration: none !important;
                 border-color: red;
             }
 
-        .nav-item.dropdown:hover .dropdown-menu {
-            display: block;
-        }
-
         .dropdown-menu {
             background-color: white;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 5px;
+            font-size: 16px;
+            padding: 10px 12px;
         }
 
-        .dropdown-item {
-            font-size: 14px;
-            padding: 8px 20px;
+        .dropdown-item:hover {
+            background-color: red;
+            color: white;
+            text-decoration: none !important;
+            border-color: red;
+            border-radius: 5px;
         }
-
-        .footer {
-            background-color: white;
-            padding: 15px;
-            color: black;
-        }
-
-            .footer a {
-                color: black;
-                margin-right: 15px;
-                text-decoration: none;
-            }
-
-                .footer a:hover {
-                    text-decoration: underline;
-                }
 
         .navbar-nav.ms-auto .nav-link {
             border: 1px solid red;

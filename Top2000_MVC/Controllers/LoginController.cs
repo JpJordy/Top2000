@@ -2,47 +2,72 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Top2000_MVC.Models;
 
-public class LoginController : Controller
+namespace Top2000_MVC.Controllers
 {
-    public IActionResult Login()
+    public class LoginController : Controller
     {
-        return View();
-    }
+        private readonly HttpClient _httpClient;
 
-    [HttpPost]
-    public async Task<IActionResult> Login(string Username, string Password)
-{
-        // Simpele hardcoded validatie (Vervang dit met database-check)
-        if (Username == "admin" && Password == "password")
-    {
-            var claims = new List<Claim>
+        public LoginController(IHttpClientFactory httpClientFactory)
         {
-                new Claim(ClaimTypes.Name, Username),
-                new Claim(ClaimTypes.Role, "Admin") // Rol voor autorisatie
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var authProperties = new AuthenticationProperties { IsPersistent = true };
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity),
-                authProperties
-            );
-
-            return RedirectToAction("SecurePage", "Login"); // Beveiligde pagina
+            _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        ViewBag.Error = "Ongeldige inloggegevens";
+        [HttpGet] // ✅ Hiermee wordt de loginpagina correct geladen
+        public IActionResult Login()
+        {
             return View();
         }
 
-    public async Task<IActionResult> Logout()
-    {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction("Login", "Login");
+        [HttpPost] // ✅ Verstuurt login-informatie naar de API
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var json = JsonSerializer.Serialize(model);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PostAsync("login", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var userJson = await response.Content.ReadAsStringAsync();
+                var user = JsonSerializer.Deserialize<UserViewModel>(userJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Username),
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties
+                );
+
+                return RedirectToAction("Index", "Home"); // ✅ Login geslaagd, doorsturen naar Home
+            }
+
+            ModelState.AddModelError("", "Ongeldige inloggegevens.");
+            return View(model);
+        }
+
+        [HttpGet] // ✅ Uitlogfunctionaliteit
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "Login");
+        }
     }
 }

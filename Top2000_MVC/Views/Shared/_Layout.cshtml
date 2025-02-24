@@ -140,6 +140,33 @@
                                 </ul>
                             </li>
                         </ul>
+                        <!-- Voeg de login en register knoppen toe aan de rechterkant -->
+                        <ul class="navbar-nav ml-auto">
+                            @if (User.Identity.IsAuthenticated)  // Check of de gebruiker is ingelogd
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle text-white" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                                        @User.Identity.Name  <!-- Hier wordt de gebruikersnaam getoond -->
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Profiel</a></li>
+                                        <li>
+                                            <form asp-controller="Login" asp-action="Logout" method="post">
+                                                <button type="submit" class="dropdown-item">Uitloggen</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Login" asp-action="Login">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" asp-controller="Register" asp-action="Register">Registreren</a>
+                                </li>
+                            }
                         <ul class="navbar-nav ms-auto">
                             <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Login" asp-action="Login">Login</a>
@@ -148,6 +175,7 @@
                                 <a class="nav-link" asp-area="" asp-controller="Registreren" asp-action="Register">Registreren</a>
                             </li>
                         </ul>
+
                     </div>
                 </div>
             </nav>

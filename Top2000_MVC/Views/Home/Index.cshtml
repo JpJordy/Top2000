@@ -1,27 +1,49 @@
 ﻿@{
     ViewBag.Title = "Slideshow";
+    var songs = ViewBag.Songs as List<Top2000_MVC.Models.Top2000Song>;
 }
 <div id="slideshow-container">
     <div id="slideshow">
         <div>
-            <img src="~/Image/cafe.jpg" class="square-img">
+            <img src="~/Image/top2000-1.jpg" class="square-img">
         </div>
         <div>
-            <img src="~/Image/hart.jpg" class="square-img">
+            <img src="~/Image/top2000-2.jpeg" class="square-img">
         </div>
         <div>
-            <img src="~/Image/mj.jpg" class="square-img">
+            <img src="~/Image/top2000-3.jpg" class="square-img">
         </div>
     </div>
     <!-- Witte box naast de slideshow met Top 5 van de Top 2000 -->
     <div id="white-box">
         <h2>Top 5 van de Top 2000</h2>
         <ul>
-            <li>1. Queen - Bohemian Rhapsody</li>
-            <li>2. Eagles - Hotel California</li>
-            <li>3. Led Zeppelin - Stairway to Heaven</li>
-            <li>4. Billy Joel - Piano Man</li>
-            <li>5. Pink Floyd - Wish You Were Here</li>
+            @foreach (var song in songs.Select((value, index) => new { Value = value, Index = index }))
+            {
+                if (song.Index >= 5) break;
+                  <!-- Ensure only top 5 are listed -->
+                var durationMinutes = song.Value.DurationMs / 60000;
+                var durationSeconds = (song.Value.DurationMs % 60000) / 1000;
+                <li>
+                    <div class="song-info">
+                        <div class="song-rank">
+                            @String.Format("{0}", song.Index + 1) <!-- Add the ranking number -->
+                        </div>
+                        <div class="song-duration">
+                            @String.Format("{0:D2}:{1:D2}", durationMinutes, durationSeconds)
+                        </div>
+                        <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
+                            <img src="@song.Value.Afbeelding" alt="Album cover" class="song-image" />
+                        </a>
+                        <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
+                            @song.Value.Titel
+                        </a>
+                        <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = song.Value.Artiest?.Naam, wiki = song.Value.Artiest?.Wiki })" class="artist-link">
+                            @song.Value.Artiest?.Naam
+                        </a>
+                    </div>
+                </li>
+            }
         </ul>
     </div>
 </div>
@@ -31,7 +53,6 @@
         margin: 0;
         padding: 0;
         background: linear-gradient(to bottom, #22282e 50%, white 50%);
-        font-family: Arial, sans-serif;
     }
 
     #slideshow-container {
@@ -61,18 +82,26 @@
 
     /* Witte box aan de rechterkant van de afbeelding */
     #white-box {
-        width: 600px;
-        height: 375px;
+        width: 475px;
+        height: 425px;
         background-color: white;
         border-top-right-radius: 10px;
         border-bottom-right-radius: 10px;
-        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
         padding: 20px;
     }
 
+        #white-box a {
+            text-decoration: none;
+            color: inherit;
+        }
+
         #white-box h2 {
             margin-top: 0;
-            font-size: 24px;
+            font-size: 22px;
+            border-bottom: 1px solid #d3d3d3;
+            padding-bottom: 10px;
+            font-weight: 600;
         }
 
         #white-box ul {
@@ -81,9 +110,56 @@
         }
 
         #white-box li {
-            font-size: 18px;
-            padding: 5px 0;
+            font-size: 16px;
+            padding: 10px 0;
         }
+
+    .song-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .song-rank {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin-right: 25px; /* Add some space to the right of the rank */
+    }
+
+    .song-title {
+        flex-grow: 1;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+        margin-left: 10px;
+    }
+
+        .song-title:hover {
+            color: #007bff;
+        }
+
+    .artist-link {
+        font-size: 14px;
+        color: #666;
+    }
+
+        .artist-link:hover {
+            color: #007bff;
+        }
+
+    .song-image {
+        width: 50px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .song-duration {
+        font-size: 12px;
+        padding-right: 10px;
+        color: #999;
+    }
 
     .square-img {
         width: 100%;

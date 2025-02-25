@@ -2,30 +2,43 @@
     var songs = ViewBag.Songs as List<Top2000_MVC.Models.Top2000Song>;
     var currentPage = ViewBag.CurrentPage ?? 1;
     var totalPages = ViewBag.TotalPages ?? 1;
+    int songsPerPage = 6;
+    int startIndex = ((currentPage - 1) * songsPerPage) + 1;
 }
+
+<div class="filter-container">
+    <a href="/Top2000?sortBy=artiest">Sorteer op Artiest</a>
+    <a href="/Top2000?sortBy=titel">Sorteer op Titel</a>
+    <a href="/Top2000?sortBy=jaar ">Sorteer op Jaar</a>
+</div>
 
 <div class="song-list-container">
     <div class="song-list">
-        @foreach (var song in songs)
+        @foreach (var song in songs.Select((value, index) => new { Value = value, Index = index }))
         {
-            var durationMinutes = song.DurationMs / 60000;
-            var durationSeconds = (song.DurationMs % 60000) / 1000;
+            var durationMinutes = song.Value.DurationMs / 60000;
+            var durationSeconds = (song.Value.DurationMs % 60000) / 1000;
 
             <div class="song-item">
-                <img src="@song.Afbeelding" alt="Album cover" class="song-image" />
+                <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
+                    <div class="song-rank">@(startIndex + song.Index)</div>
+                </a>
+                <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
+                    <img src="@song.Value.Afbeelding" alt="Album cover" class="song-image" />
+                </a>
                 <div class="song-details">
-                    <div class="song-title">@song.Titel</div>
-                    <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = song.Artiest?.Naam, wiki = song.Artiest?.Wiki })">
-                        @song.Artiest?.Naam
+                    <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">@song.Value.Titel</a>
+                    <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = song.Value.Artiest?.Naam, wiki = song.Value.Artiest?.Wiki })" class="artist-link">
+                        @song.Value.Artiest?.Naam
                     </a>
                 </div>
-                <div class="song-year">@song.Jaar</div>
+                <div class="song-year">@song.Value.Jaar</div>
                 <div class="song-duration">
                     @String.Format("{0:D2}:{1:D2}", durationMinutes, durationSeconds)
                 </div>
-                @if (!string.IsNullOrEmpty(song.Youtube))
+                @if (!string.IsNullOrEmpty(song.Value.Youtube))
                 {
-                    <a href="@song.Youtube" target="_blank" class="youtube-link">▶</a>
+                    <a href="@song.Value.Youtube" target="_blank" class="youtube-link">▶</a>
                 }
             </div>
         }
@@ -51,19 +64,62 @@
     </div>
 </div>
 
+<script>
+    document.querySelector('#sortByJaar').addEventListener('click', function (e) {
+        e.preventDefault(); 
+        window.location.href = '/Top2000?sortBy=jaar'; 
+    });
+
+</script>
+
 <style>
+    .filter-container {
+        margin-bottom: 20px;
+        padding: 10px;
+        background-color: #252525;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+        .filter-container label {
+            margin-right: 10px;
+            color: white;
+        }
+
+        .filter-container select, .filter-container input, .filter-container button {
+            margin-right: 10px;
+            padding: 5px;
+        }
+
+    .song-rank {
+        font-size: 20px;
+        font-weight: bold;
+        color: darkgrey;
+        text-decoration: underline;
+        text-decoration-color: blue;
+        margin-right: 15px;
+        width: 40px;
+        text-align: center;
+    }
+
+    .artist-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        text-decoration: underline;
+    }
+
     .song-list-container {
         width: 100%;
-        height: 84vh;
+        height: 100%;
         background-color: #1e1e1e;
         padding: 20px;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
+        border-radius: 10px;
         align-items: center;
-        border-bottom-left-radius: 20px;
-        border-bottom-right-radius: 20px;
         overflow: hidden;
     }
 
@@ -139,11 +195,32 @@
     .song-title {
         font-weight: bold;
         font-size: 18px;
+        color: #b3b3b3;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: inline-block;
+        max-width: fit-content;
     }
 
-    .song-artist {
-        font-size: 14px;
-        color: #b3b3b3;
+        .song-title:hover {
+            color: #d1d1d1;
+        }
+
+    .artist-link {
+        color: #a0c4ff;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: inline-block;
+        max-width: fit-content;
+    }
+
+        .artist-link:hover {
+            color: #c7e3ff;
+        }
+
+    .song-title,
+    .artist-link {
+        display: block;
     }
 
     .song-year {
@@ -170,5 +247,14 @@
         padding: 10px;
         width: 100%;
     }
+
+    .song-preview {
+        margin-top: 10px;
+    }
+
+        .song-preview audio {
+            width: 100%;
+            max-width: 200px;
+        }
 
 </style>

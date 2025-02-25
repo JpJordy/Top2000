@@ -1,0 +1,123 @@
+﻿@{
+    var songId = ViewBag.SongId;
+    var title = ViewBag.Title;
+    var artistName = ViewBag.ArtistName;
+    var artistWiki = ViewBag.ArtistWiki;
+    var year = ViewBag.Year;
+    var durationMs = Convert.ToInt32(ViewBag.DurationMs);
+    var afbeelding = ViewBag.Afbeelding;
+    var youtube = ViewBag.Youtube;
+    var popularity = ViewBag.Popularity;
+    var spotifyUrl = ViewBag.SpotifyUrl;
+
+    var durationMinutes = ViewBag.DurationMs / 60000;
+    var durationSeconds = (ViewBag.DurationMs % 60000) / 1000;
+}
+
+<div class="song-info-container">
+    <div class="song-header">
+        <div class="song-image">
+            <img src="@afbeelding" alt="@title" />
+        </div>
+        <div class="song-details">
+            <h2 class="song-title">@title</h2>
+            <p>
+                <strong>Artiest:</strong> <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = @artistName, wiki = artistWiki })" class="artist-link">
+                    @artistName
+                </a>
+            </p>
+            <p><strong>Jaar:</strong> @year</p>
+            <p><strong>Duur:</strong> @String.Format("{0:D2}:{1:D2}", durationMinutes, durationSeconds)</p>
+            <p><strong>Populariteit:</strong> @popularity / 100</p>
+
+            @if (!string.IsNullOrEmpty(youtube))
+            {
+                <p><a href="@youtube" target="_blank" class="youtube-link">Bekijk op YouTube ▶</a></p>
+            }
+
+            @if (!string.IsNullOrEmpty(spotifyUrl))
+            {
+                <p><a href="@spotifyUrl" target="_blank" class="spotify-link">Beluister op Spotify 🎵</a></p>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    .song-info-container {
+        width: 100%;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 40px;
+        background-color: #1e1e1e;
+        border-radius: 20px;
+        color: white;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .song-header {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        border-bottom: 2px solid #f0ad4e;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+    }
+
+    .song-image img {
+        width: 250px;
+        height: 250px;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .song-details {
+        flex: 1;
+    }
+
+    .song-title {
+        font-size: 36px;
+        font-weight: 700;
+        color: #f0ad4e;
+        margin-bottom: 10px;
+    }
+
+    .artist-link {
+        color: #dcdcdc;
+        text-decoration: none;
+    }
+
+        .artist-link:hover {
+            color: #f0ad4e;
+        }
+
+    .youtube-link, .spotify-link {
+        display: inline-block;
+        padding: 12px 25px;
+        background-color: transparent;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 18px;
+        font-weight: 600;
+        border: 2px solid;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .youtube-link {
+        border-color: red;
+    }
+
+        .youtube-link:hover {
+            background-color: red;
+        }
+
+    .spotify-link {
+        border-color: #1DB954;
+    }
+
+        .spotify-link:hover {
+            background-color: #1DB954;
+        }
+</style>

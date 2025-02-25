@@ -32,6 +32,8 @@ namespace Top2000_API.Controllers
             public string? Youtube { get; set; }
             public ArtistDTO? Artiest { get; set; }
             public int DurationMs { get; set; }  
+            public int? Popularity { get; set; }
+            public string? SpotifyUrls { get; set; }
         }
 
 
@@ -45,7 +47,7 @@ namespace Top2000_API.Controllers
         }
 
 
-        private async Task<(string, int)> GetTrackInfoAsync(string songName, string artistName = null)
+        private async Task<(string albumCoverUrl, int durationMs, int popularity, string spotifyUrl)> GetTrackInfoAsync(string songName, string artistName = null)
         {
             var clientId = "586a81230c214d4680827fa11c07357a";
             var clientSecret = "8ea52916b7dc4ec8985fab26c97ca725";
@@ -53,8 +55,8 @@ namespace Top2000_API.Controllers
             var authUrl = "https://accounts.spotify.com/api/token";
             var authRequestBody = new FormUrlEncodedContent(new[]
             {
-                new KeyValuePair<string, string>("grant_type", "client_credentials")
-            });
+        new KeyValuePair<string, string>("grant_type", "client_credentials")
+    });
 
             _httpClient.DefaultRequestHeaders.Clear();
             _httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(clientId + ":" + clientSecret)));
@@ -80,12 +82,16 @@ namespace Top2000_API.Controllers
 
             if (searchResult.tracks.items.Count > 0)
             {
-                var albumCoverUrl = searchResult.tracks.items[0].album.images[0].url;
-                var durationMs = searchResult.tracks.items[0].duration_ms;
-                return (albumCoverUrl, durationMs);
+                var track = searchResult.tracks.items[0];
+                var albumCoverUrl = track.album.images[0].url;
+                var durationMs = track.duration_ms;
+                var popularity = track.popularity; 
+                var spotifyUrl = track.external_urls.spotify; 
+
+                return (albumCoverUrl, durationMs, popularity, spotifyUrl);
             }
 
-            return ("No album cover found.", 0);
+            return ("No album cover found.", 0, 0, "No Spotify URL found.");
         }
 
         private async Task<ArtistDTO> GetArtistInfoAsync(string artistName)
@@ -145,21 +151,42 @@ namespace Top2000_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7)
+        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7, string sortBy = "Titel")
         {
             var skip = (page - 1) * pageSize;
 
-            var songs = await _context.Songs
-                .Include(s => s.Artiest)
-                .Skip(skip)
-                .Take(pageSize)
-                .ToListAsync();
+            IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
+
+            Console.WriteLine($"Sorteren op: {sortBy}");
+
+            switch (sortBy.ToLower())
+            {
+                case "artiest":
+                    songsQuery = songsQuery.OrderBy(s => s.Artiest.Naam);
+                    break;
+
+                case "jaar":
+                    songsQuery = songsQuery.OrderBy(s => s.Jaar);
+                    break;
+
+                case "titel":
+                    songsQuery = songsQuery.OrderBy(s => s.Titel);
+                    break;
+
+                default:
+                    songsQuery = songsQuery.OrderBy(s => s.Titel); 
+                    break;
+            }
+
+            Console.WriteLine($"Gebruikte query: {songsQuery.ToString()}");
+
+            var songs = await songsQuery.Skip(skip).Take(pageSize).ToListAsync();
 
             var songDtos = new List<SongWithArtistDTO>();
 
             foreach (var s in songs)
             {
-                var (albumCoverUrl, durationMs) = await GetTrackInfoAsync(s.Titel, s.Artiest.Naam);
+                var (albumCoverUrl, durationMs, popularity, spotifyUrl) = await GetTrackInfoAsync(s.Titel, s.Artiest.Naam);
 
                 var songDto = new SongWithArtistDTO
                 {
@@ -194,6 +221,7 @@ namespace Top2000_API.Controllers
             return Ok(response);
         }
 
+
         [HttpGet("{id}")]
         public async Task<ActionResult<SongWithArtistDTO>> GetSong(int id)
         {
@@ -203,10 +231,7 @@ namespace Top2000_API.Controllers
 
             if (song == null) return NotFound();
 
-            var (albumCoverUrl, durationMs) = await GetTrackInfoAsync(song.Titel, song.Artiest.Naam);
-
-            var durationMinutes = durationMs / 60000;
-            var durationSeconds = (durationMs % 60000) / 1000; 
+            var (albumCoverUrl, durationMs, popularity, spotifyUrls) = await GetTrackInfoAsync(song.Titel, song.Artiest.Naam);
 
             var songDto = new SongWithArtistDTO
             {
@@ -216,6 +241,9 @@ namespace Top2000_API.Controllers
                 Afbeelding = albumCoverUrl, 
                 Lyrics = song.Lyrics,
                 Youtube = song.Youtube,
+                DurationMs = durationMs,
+                Popularity = popularity,
+                SpotifyUrls = spotifyUrls,
                 Artiest = new ArtistDTO
                 {
                     ArtiestId = song.Artiest.ArtiestId,
@@ -242,7 +270,7 @@ namespace Top2000_API.Controllers
 
             foreach (var song in songs)
             {
-                var (albumCoverUrl, durationMs) = await GetTrackInfoAsync(song.Titel, song.Artiest.Naam);
+                var (albumCoverUrl, durationMs, popularity, spotifyUrls) = await GetTrackInfoAsync(song.Titel, song.Artiest.Naam);
 
                 var durationMinutes = durationMs / 60000;  
                 var durationSeconds = (durationMs % 60000) / 1000;

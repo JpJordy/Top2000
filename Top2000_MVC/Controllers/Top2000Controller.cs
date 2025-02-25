@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Top2000_MVC.Models;
@@ -16,13 +17,25 @@ namespace Top2000_MVC.Controllers
             _httpClient = httpClient;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int? year = null, string artist = null, string sortBy = null)
         {
             if (page > 334)
             {
                 page = 334;
             }
+
             var apiUrl = $"https://localhost:7020/api/songs?page={page}&pageSize=6";
+
+            if (year.HasValue)
+            {
+                apiUrl += $"&year={year.Value}";
+            }
+
+            if (!string.IsNullOrEmpty(artist))
+            {
+                apiUrl += $"&artist={Uri.EscapeDataString(artist)}";
+            }
+
             var response = await _httpClient.GetAsync(apiUrl);
 
             if (!response.IsSuccessStatusCode)
@@ -46,7 +59,24 @@ namespace Top2000_MVC.Controllers
                 return View();
             }
 
-            var songs = apiResponse.songs.ToObject<List<Top2000Song>>();
+            List<Top2000Song> songs = apiResponse.songs.ToObject<List<Top2000Song>>();
+
+            if (!string.IsNullOrEmpty(sortBy))
+            {
+                switch (sortBy.ToLower())
+                {
+                    case "artist":
+                        songs = songs.OrderBy(s => s.Artiest?.Naam ?? "").ToList();
+                        break;
+                    case "title":
+                        songs = songs.OrderBy(s => s.Titel ?? "").ToList();
+                        break;
+                    case "year":
+                        songs = songs.OrderByDescending(s => s.Jaar).ToList();
+                        break;
+                }
+            }
+
             var totalPages = (int)apiResponse.totalPages;
 
             if (totalPages > 334)
@@ -80,7 +110,7 @@ namespace Top2000_MVC.Controllers
             {
                 Console.WriteLine("API Error: " + response.StatusCode);
                 ViewBag.Artist = null;
-                return View("~/Views/ArtiestInfo/Index.cshtml"); // Explicitly specify the location of the view
+                return View("~/Views/ArtiestInfo/Index.cshtml");
             }
 
             var json = await response.Content.ReadAsStringAsync();
@@ -96,9 +126,44 @@ namespace Top2000_MVC.Controllers
             ViewBag.Artist = apiResponse;
             ViewBag.Wiki = wiki;
 
-            Console.WriteLine(ViewBag.wiki);
+            return View("~/Views/ArtiestInfo/Index.cshtml");
+        }
 
-            return View("~/Views/ArtiestInfo/Index.cshtml"); // Return naar de view
+        public async Task<IActionResult> SongDetail(int songId)
+        {
+            var apiUrl = $"https://localhost:7020/api/songs/{songId}";
+            var response = await _httpClient.GetAsync(apiUrl);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine("API Error: " + response.StatusCode);
+                return RedirectToAction("Index");
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var song = JsonConvert.DeserializeObject<Top2000Song>(json);
+
+            if (song == null)
+            {
+                Console.WriteLine("API response is null.");
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Song = song;
+            ViewBag.SongId = song.SongId;
+            ViewBag.Title = song.Titel;
+            ViewBag.ArtistName = song.Artiest?.Naam;
+            ViewBag.ArtistWiki = song.Artiest?.Wiki;
+            ViewBag.Year = song.Jaar;
+            ViewBag.DurationMs = song.DurationMs;
+            ViewBag.Afbeelding = song.Afbeelding;
+            ViewBag.Youtube = song.Youtube;
+            ViewBag.Popularity = song.Popularity;
+            ViewBag.SpotifyUrl = song.SpotifyUrls;
+
+            Console.WriteLine($"DurationMs: {ViewBag.DurationMs}");
+
+            return View("~/Views/SongInfo/Index.cshtml");
         }
     }
 }

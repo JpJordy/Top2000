@@ -14,5 +14,7 @@ namespace Top2000_MVC.Models
         public int ArtiestId { get; set; }
         public Top2000Artist? Artiest { get; set; }
         public int DurationMs { get; set; }
+        public int? Popularity { get; set; }
+        public string? SpotifyUrls { get; set; }
     }
 }

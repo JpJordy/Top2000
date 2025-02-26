@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Top2000_MVC.Models;
 
 namespace Top2000_API.Models
 {
@@ -11,5 +12,6 @@ namespace Top2000_API.Models
 
         public DbSet<Song> Songs { get; set; }
         public DbSet<Artiest> Artiesten { get; set; }
+        public DbSet<Lijst> Lijsten { get; set; } = null!;
     }
 }

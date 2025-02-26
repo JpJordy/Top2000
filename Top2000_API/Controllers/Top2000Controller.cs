@@ -151,13 +151,24 @@ namespace Top2000_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7, string sortBy = "Titel")
+        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7, string sortBy = "positie", int? top2000Year = null)
         {
             var skip = (page - 1) * pageSize;
 
             IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
 
+            if (top2000Year.HasValue)
+            {
+                var songIdsInTop2000Year = _context.Lijsten
+                    .Where(l => l.Jaar == top2000Year.Value)
+                    .Select(l => l.SongId)
+                    .ToList();
+
+                songsQuery = songsQuery.Where(s => songIdsInTop2000Year.Contains(s.SongId));
+            }
+
             Console.WriteLine($"Sorteren op: {sortBy}");
+            Console.WriteLine($"Top 2000 Jaar: {top2000Year}");
 
             switch (sortBy.ToLower())
             {
@@ -173,8 +184,13 @@ namespace Top2000_API.Controllers
                     songsQuery = songsQuery.OrderBy(s => s.Titel);
                     break;
 
+                case "positie":
                 default:
-                    songsQuery = songsQuery.OrderBy(s => s.Titel); 
+                    songsQuery = from song in songsQuery
+                                 join lijst in _context.Lijsten on song.SongId equals lijst.SongId
+                                 where top2000Year == null || lijst.Jaar == top2000Year
+                                 orderby lijst.Positie
+                                 select song;
                     break;
             }
 
@@ -220,7 +236,6 @@ namespace Top2000_API.Controllers
 
             return Ok(response);
         }
-
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SongWithArtistDTO>> GetSong(int id)

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Top2000_MVC.Controllers
             _httpClient = httpClient;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int? year = null, string artist = null, string sortBy = null)
+        public async Task<IActionResult> Index(int page = 1, int? top2000Year = null, string? artist = null, string? sortBy = null)
         {
             if (page > 334)
             {
@@ -26,15 +27,32 @@ namespace Top2000_MVC.Controllers
 
             var apiUrl = $"https://localhost:7020/api/songs?page={page}&pageSize=6";
 
-            if (year.HasValue)
+            if (!string.IsNullOrEmpty(sortBy))
             {
-                apiUrl += $"&year={year.Value}";
+                apiUrl += $"&sortBy={sortBy}";
+            }
+            else
+            {
+                sortBy = $"&sortBy=positie";
+            }
+
+            if (top2000Year.HasValue)
+            {
+                apiUrl += $"&top2000Year={top2000Year.Value}";
             }
 
             if (!string.IsNullOrEmpty(artist))
             {
                 apiUrl += $"&artist={Uri.EscapeDataString(artist)}";
             }
+
+            if (!top2000Year.HasValue)
+            {
+                top2000Year = 2023;
+                apiUrl += $"&top2000Year=2023";
+            }
+
+            ViewBag.SelectedTop2000Year = top2000Year;
 
             var response = await _httpClient.GetAsync(apiUrl);
 
@@ -44,6 +62,9 @@ namespace Top2000_MVC.Controllers
                 ViewBag.Songs = new List<Top2000Song>();
                 ViewBag.TotalPages = 1;
                 ViewBag.CurrentPage = 1;
+                ViewBag.SelectedTop2000Year = top2000Year;
+                ViewBag.SelectedArtist = artist;
+                ViewBag.SortBy = sortBy;
                 return View();
             }
 
@@ -56,6 +77,9 @@ namespace Top2000_MVC.Controllers
                 ViewBag.Songs = new List<Top2000Song>();
                 ViewBag.TotalPages = 1;
                 ViewBag.CurrentPage = 1;
+                ViewBag.SelectedTop2000Year = top2000Year;
+                ViewBag.SelectedArtist = artist;
+                ViewBag.SortBy = sortBy;
                 return View();
             }
 
@@ -74,11 +98,14 @@ namespace Top2000_MVC.Controllers
                     case "year":
                         songs = songs.OrderByDescending(s => s.Jaar).ToList();
                         break;
+                    case "positie":
+                    default:
+                        songs = songs.OrderBy(s => s.Positie).ToList();
+                        break;
                 }
             }
 
             var totalPages = (int)apiResponse.totalPages;
-
             if (totalPages > 334)
             {
                 totalPages = 334;
@@ -89,9 +116,24 @@ namespace Top2000_MVC.Controllers
                 page = totalPages;
             }
 
+
+            var years = Enumerable.Range(1999, 2023 - 1999 + 1)
+                .Reverse()
+                      .Select(y => new SelectListItem
+                      {
+                          Value = y.ToString(),
+                          Text = y.ToString(),
+                          Selected = y == top2000Year
+                      }).ToList();
+
+            ViewBag.YearList = years;
+
             ViewBag.Songs = songs;
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;
+            ViewBag.SelectedTop2000Year = top2000Year;
+            ViewBag.SelectedArtist = artist;
+            ViewBag.SortBy = sortBy;
 
             return View();
         }
@@ -160,8 +202,6 @@ namespace Top2000_MVC.Controllers
             ViewBag.Youtube = song.Youtube;
             ViewBag.Popularity = song.Popularity;
             ViewBag.SpotifyUrl = song.SpotifyUrls;
-
-            Console.WriteLine($"DurationMs: {ViewBag.DurationMs}");
 
             return View("~/Views/SongInfo/Index.cshtml");
         }

@@ -2,17 +2,35 @@
     var songs = ViewBag.Songs as List<Top2000_MVC.Models.Top2000Song>;
     var currentPage = ViewBag.CurrentPage ?? 1;
     var totalPages = ViewBag.TotalPages ?? 1;
+    var selectedTop2000Year = ViewBag.SelectedTop2000Year;
     int songsPerPage = 6;
     int startIndex = ((currentPage - 1) * songsPerPage) + 1;
 }
 
-<div class="filter-container">
-    <a href="/Top2000?sortBy=artiest">Sorteer op Artiest</a>
-    <a href="/Top2000?sortBy=titel">Sorteer op Titel</a>
-    <a href="/Top2000?sortBy=jaar ">Sorteer op Jaar</a>
-</div>
 
 <div class="song-list-container">
+    <form id="yearFilterForm" method="get" action="/Top2000">
+        <span class="filter-label">Sorteer op:</span>
+        <div class="filter-section">
+                <a href="/Top2000?page=@(currentPage)&sortBy=positie&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Positie</a>
+                <a href="/Top2000?page=@(currentPage)&sortBy=artiest&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Artiest</a>
+                <a href="/Top2000?page=@(currentPage)&sortBy=titel&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Titel</a>
+                <a href="/Top2000?page=@(currentPage)&sortBy=jaar&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Releasedatum</a>
+        </div>
+
+            <div class="dropdown-section">
+                <select name="top2000Year" id="top2000YearDropdown" onchange="updateURL()" class="year-dropdown">
+                    @for (int i = 2023; i >= 1999; i--)
+                    {
+                        bool isSelected = ViewBag.SelectedTop2000Year != null && (int)ViewBag.SelectedTop2000Year == i;
+                        <option value="@i" selected="@(isSelected ? "selected" : null)">@i</option>
+                    }
+                </select>
+            </div>
+
+    </form>
+
+
     <div class="song-list">
         @foreach (var song in songs.Select((value, index) => new { Value = value, Index = index }))
         {
@@ -47,13 +65,13 @@
     <div class="pagination-container">
         @if (currentPage > 1)
         {
-            <a href="@Url.Action("Index", new { page = currentPage - 1 })" class="previous-page-button">
+            <a href="/Top2000?page=@(currentPage - 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year" class="previous-page-button">
                 Vorige pagina
             </a>
         }
         @if (currentPage < totalPages)
         {
-            <a href="@Url.Action("Index", new { page = currentPage + 1 })" class="next-page-button">
+            <a href="/Top2000?page=@(currentPage + 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year" class="next-page-button">
                 Volgende pagina
             </a>
         }
@@ -65,30 +83,121 @@
 </div>
 
 <script>
-    document.querySelector('#sortByJaar').addEventListener('click', function (e) {
-        e.preventDefault(); 
-        window.location.href = '/Top2000?sortBy=jaar'; 
-    });
+    function updateURL() {
+        var yearDropdown = document.getElementById('top2000YearDropdown');
+        var selectedYear = yearDropdown.options[yearDropdown.selectedIndex].value;
 
+        var currentUrl = new URL(window.location.href);
+
+        currentUrl.searchParams.set('top2000Year', selectedYear);
+
+        var currentPage = currentUrl.searchParams.get('page') || '@(ViewBag.CurrentPage)';
+        var currentSortBy = currentUrl.searchParams.get('sortBy') || '';
+
+        if (currentSortBy) {
+            currentUrl.searchParams.set('sortBy', currentSortBy);
+        }
+
+        if (currentPage) {
+            currentUrl.searchParams.set('page', currentPage);
+        }
+
+        window.location.href = currentUrl.toString();
+    }
 </script>
 
 <style>
-    .filter-container {
-        margin-bottom: 20px;
-        padding: 10px;
-        background-color: #252525;
-        border-radius: 5px;
+    .filter-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
         text-align: center;
     }
 
-        .filter-container label {
-            margin-right: 10px;
+    .filter-label {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #b3b3b3;
+        margin-right: 5px;
+    }
+
+    .filter-button {
+        padding: 5px 12px;
+        font-size: 12px; 
+        font-weight: normal; 
+        color: white;
+        background: transparent;
+        border: 1.5px solid #f0ad4e;
+        border-radius: 4px; 
+        text-decoration: none;
+        transition: all 0.15s ease-in-out;
+        text-align: center;
+        display: inline-block;
+        box-shadow: 0 0 2px #f0ad4e;
+        min-width: 75px; 
+    }
+
+        .filter-button:hover {
+            background: #f0ad4e;
             color: white;
+            text-decoration: none;
+            transform: scale(1.02);
         }
 
-        .filter-container select, .filter-container input, .filter-container button {
-            margin-right: 10px;
-            padding: 5px;
+    .dropdown-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 15px;
+        margin-bottom: 15px;
+        width: 100%;
+    }
+
+    .year-dropdown {
+        padding: 5px 12px;
+        font-size: 12px;
+        font-weight: normal;
+        color: white;
+        background-color: transparent;
+        border: 1.5px solid #f0ad4e;
+        border-radius: 4px;
+        transition: all 0.15s ease-in-out;
+        min-width: 75px;
+        text-align: center;
+        cursor: pointer;
+        outline: none;
+        box-shadow: 0 0 2px #f0ad4e;
+        overflow: hidden;
+    }
+
+        .year-dropdown:hover {
+            background: #f0ad4e;
+            color: white;
+            text-decoration: none;
+        }
+
+        .year-dropdown:focus {
+            background-color: #404040;
+            box-shadow: 0 0 8px rgba(255, 77, 77, 0.7);
+        }
+
+        .year-dropdown option {
+            background-color: #1e1e1e;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .year-dropdown::-webkit-scrollbar {
+            display: none;
         }
 
     .song-rank {
@@ -118,7 +227,8 @@
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        border-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
         align-items: center;
         overflow: hidden;
     }
@@ -247,14 +357,4 @@
         padding: 10px;
         width: 100%;
     }
-
-    .song-preview {
-        margin-top: 10px;
-    }
-
-        .song-preview audio {
-            width: 100%;
-            max-width: 200px;
-        }
-
 </style>

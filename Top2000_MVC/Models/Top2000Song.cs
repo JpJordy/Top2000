@@ -5,16 +5,24 @@ namespace Top2000_MVC.Models
     public class Top2000Song
     {
         public int SongId { get; set; }
+
         [Required]
         public string Titel { get; set; } = string.Empty;
+
         public int Jaar { get; set; }
+
+        public int? Top2000Year { get; set; }  
+
         public string? Afbeelding { get; set; }
         public string? Lyrics { get; set; }
         public string? Youtube { get; set; }
+
         public int ArtiestId { get; set; }
         public Top2000Artist? Artiest { get; set; }
+
         public int DurationMs { get; set; }
         public int? Popularity { get; set; }
         public string? SpotifyUrls { get; set; }
+        public int? Positie { get; set; }
     }
 }

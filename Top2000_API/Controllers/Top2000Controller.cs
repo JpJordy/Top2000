@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using Top2000_API.Data;
 using System.Threading.Tasks;
 using Top2000_API.Models;
 
@@ -13,10 +14,10 @@ namespace Top2000_API.Controllers
     [Route("api/songs")]
     public class SongsController : ControllerBase
     {
-        private readonly Top2000DbContext _context;
+        private readonly ApplicationDbContext _context;
         private readonly HttpClient _httpClient;
 
-        public SongsController(Top2000DbContext context)
+        public SongsController(ApplicationDbContext context)
         {
             _context = context;
             _httpClient = new HttpClient();

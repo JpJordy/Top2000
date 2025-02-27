@@ -168,9 +168,6 @@ namespace Top2000_API.Controllers
                 songsQuery = songsQuery.Where(s => songIdsInTop2000Year.Contains(s.SongId));
             }
 
-            Console.WriteLine($"Sorteren op: {sortBy}");
-            Console.WriteLine($"Top 2000 Jaar: {top2000Year}");
-
             switch (sortBy.ToLower())
             {
                 case "artiest":
@@ -195,7 +192,6 @@ namespace Top2000_API.Controllers
                     break;
             }
 
-            Console.WriteLine($"Gebruikte query: {songsQuery.ToString()}");
 
             var songs = await songsQuery.Skip(skip).Take(pageSize).ToListAsync();
 

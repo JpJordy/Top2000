@@ -15,7 +15,7 @@ namespace Top2000_MVC.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var apiUrl = $"https://localhost:7020/api/songs?page=1&pageSize=5";
+            var apiUrl = $"https://localhost:7020/api/songs?page=1&pageSize=5&top2000year=2023&sortby=positie";
 
             var response = await _httpClient.GetAsync(apiUrl);
             if (!response.IsSuccessStatusCode)

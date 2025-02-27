@@ -34,7 +34,6 @@ namespace Top2000_MVC.Controllers
 
             var json = JsonSerializer.Serialize(model);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             var response = await _httpClient.PostAsync("login", content);
 
             if (response.IsSuccessStatusCode)
@@ -45,18 +44,20 @@ namespace Top2000_MVC.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role) // Voeg rol toe aan claims
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties
-                );
+                // Log in de gebruiker en stel een cookie in
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction("Index", "Home"); // ✅ Login geslaagd, doorsturen naar Home
+                // Debugging: Controleer of de cookie is ingesteld
+                Console.WriteLine("✅ Cookie zou nu aangemaakt moeten zijn!");
+                Console.WriteLine($"🔍 Ingelogde gebruiker: {user.Username}");
+
+                return RedirectToAction("Index", "Home"); // Redirect naar Home na succesvolle login
             }
 
             ModelState.AddModelError("", "Ongeldige inloggegevens.");

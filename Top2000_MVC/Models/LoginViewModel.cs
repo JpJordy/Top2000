@@ -9,5 +9,6 @@ namespace Top2000_MVC.Models
 
         [Required, DataType(DataType.Password)]
         public string Password { get; set; }
+
     }
 }

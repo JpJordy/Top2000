@@ -30,7 +30,7 @@ namespace Top2000_API.Controllers
             if (user == null || user.PasswordHash != HashPassword(model.Password))
                 return Unauthorized("Ongeldige inloggegevens.");
 
-            // Hier zou je normaal een JWT token genereren, maar voor nu sturen we een simpele response terug
+            // Hier zou je normaal een JWT token genereren, maar voor nu sturen we een simpele response 
             return Ok(new { message = "Login succesvol!", username = user.UserName });
         }
 

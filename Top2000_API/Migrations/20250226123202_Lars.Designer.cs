@@ -12,8 +12,8 @@ using Top2000_API.Data;
 namespace Top2000_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250224113053_FixApplicationUserId")]
-    partial class FixApplicationUserId
+    [Migration("20250226123202_Lars")]
+    partial class Lars
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +158,7 @@ namespace Top2000_API.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Top2000_API.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Top2000_API.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -166,15 +166,11 @@ namespace Top2000_API.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -215,13 +211,7 @@ namespace Top2000_API.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -329,7 +319,7 @@ namespace Top2000_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Top2000_API.Models.ApplicationUser", null)
+                    b.HasOne("Top2000_API.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -338,7 +328,7 @@ namespace Top2000_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Top2000_API.Models.ApplicationUser", null)
+                    b.HasOne("Top2000_API.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -353,7 +343,7 @@ namespace Top2000_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Top2000_API.Models.ApplicationUser", null)
+                    b.HasOne("Top2000_API.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -362,18 +352,11 @@ namespace Top2000_API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Top2000_API.Models.ApplicationUser", null)
+                    b.HasOne("Top2000_API.Data.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Top2000_API.Models.ApplicationUser", b =>
-                {
-                    b.HasOne("Top2000_API.Models.ApplicationUser", null)
-                        .WithMany("Users")
-                        .HasForeignKey("ApplicationUserId");
                 });
 
             modelBuilder.Entity("Top2000_API.Models.Lijst", b =>
@@ -390,22 +373,12 @@ namespace Top2000_API.Migrations
             modelBuilder.Entity("Top2000_API.Models.Song", b =>
                 {
                     b.HasOne("Top2000_API.Models.Artiest", "Artiest")
-                        .WithMany("Songs")
+                        .WithMany()
                         .HasForeignKey("ArtiestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Artiest");
-                });
-
-            modelBuilder.Entity("Top2000_API.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("Top2000_API.Models.Artiest", b =>
-                {
-                    b.Navigation("Songs");
                 });
 
             modelBuilder.Entity("Top2000_API.Models.Song", b =>

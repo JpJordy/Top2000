@@ -25,15 +25,12 @@ namespace Top2000_API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("Ongeldige invoer.");
 
-
-
-            // Wachtwoord hashen
             string hashedPassword = HashPassword(model.Password);
-
             var user = new ApplicationUser
             {
-                UserName = model.Username, // ✅ Gebruik "UserName" met hoofdletter U
-                PasswordHash = hashedPassword
+                UserName = model.Username,
+                PasswordHash = hashedPassword,
+                Role =  "User" // Standaardrol is "User"
             };
 
             _context.Users.Add(user);
@@ -41,6 +38,7 @@ namespace Top2000_API.Controllers
 
             return Ok(new { message = "Registratie succesvol!" });
         }
+
 
         private string HashPassword(string password)
         {

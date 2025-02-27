@@ -12,8 +12,8 @@ using Top2000_API.Data;
 namespace Top2000_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250227131909_Lars")]
-    partial class Lars
+    [Migration("20250226123959_Jp")]
+    partial class Jp
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -200,6 +200,10 @@ namespace Top2000_API.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");

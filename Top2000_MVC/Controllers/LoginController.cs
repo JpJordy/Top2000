@@ -20,13 +20,13 @@ namespace Top2000_MVC.Controllers
             _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        [HttpGet] // ✅ Hiermee wordt de loginpagina correct geladen
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        [HttpPost] // ✅ Verstuurt login-informatie naar de API
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -44,27 +44,25 @@ namespace Top2000_MVC.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
-                    new Claim(ClaimTypes.Role, user.Role) // Voeg rol toe aan claims
+                    new Claim(ClaimTypes.Role, user.Role)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-                // Log in de gebruiker en stel een cookie in
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                // Debugging: Controleer of de cookie is ingesteld
                 Console.WriteLine("✅ Cookie zou nu aangemaakt moeten zijn!");
                 Console.WriteLine($"🔍 Ingelogde gebruiker: {user.Username}");
 
-                return RedirectToAction("Index", "Home"); // Redirect naar Home na succesvolle login
+                return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError("", "Ongeldige inloggegevens.");
             return View(model);
         }
 
-        [HttpGet] // ✅ Uitlogfunctionaliteit
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

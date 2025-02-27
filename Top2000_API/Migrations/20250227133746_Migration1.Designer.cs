@@ -12,8 +12,8 @@ using Top2000_API.Data;
 namespace Top2000_API.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250226123959_Jp")]
-    partial class Jp
+    [Migration("20250227133746_Migration1")]
+    partial class Migration1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

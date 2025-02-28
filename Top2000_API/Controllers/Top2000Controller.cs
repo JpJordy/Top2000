@@ -151,6 +151,25 @@ namespace Top2000_API.Controllers
             return Ok(artistInfo);
         }
 
+        [HttpGet("artist/{artistName}/songs-per-year")]
+        public async Task<ActionResult<Dictionary<int, int>>> GetSongsPerYear(string artistName)
+        {
+            var artist = await _context.Artiesten.FirstOrDefaultAsync(a => a.Naam == artistName);
+            if (artist == null)
+            {
+                return NotFound("Artiest niet gevonden");
+            }
+
+            var songsPerYear = await _context.Lijsten
+                .Where(l => _context.Songs.Any(s => s.SongId == l.SongId && s.ArtiestId == artist.ArtiestId))
+                .GroupBy(l => l.Jaar)
+                .Select(g => new { Jaar = g.Key, Aantal = g.Count() })
+                .ToDictionaryAsync(g => g.Jaar, g => g.Aantal);
+
+            return Ok(songsPerYear);
+        }
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7, string sortBy = "positie", int? top2000Year = null)
         {

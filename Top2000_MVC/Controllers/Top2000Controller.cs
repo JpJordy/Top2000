@@ -150,7 +150,6 @@ namespace Top2000_MVC.Controllers
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("API Error: " + response.StatusCode);
                 ViewBag.Artist = null;
                 return View("~/Views/ArtiestInfo/Index.cshtml");
             }
@@ -160,16 +159,29 @@ namespace Top2000_MVC.Controllers
 
             if (apiResponse == null)
             {
-                Console.WriteLine("API response is null or does not contain artist data.");
                 ViewBag.Artist = null;
                 return View("~/Views/ArtiestInfo/Index.cshtml");
             }
 
+            var statsUrl = $"https://localhost:7020/api/songs/artist/{artistName}/songs-per-year";
+            var statsResponse = await _httpClient.GetAsync(statsUrl);
+            Dictionary<int, int> songsPerYear = new Dictionary<int, int>();
+
+            if (statsResponse.IsSuccessStatusCode)
+            {
+                var statsJson = await statsResponse.Content.ReadAsStringAsync();
+                songsPerYear = JsonConvert.DeserializeObject<Dictionary<int, int>>(statsJson);
+            }
+
             ViewBag.Artist = apiResponse;
             ViewBag.Wiki = wiki;
+            // Zorg ervoor dat alle jaren van 1999 tot 2023 erin zitten, zelfs als er geen data is
+            ViewBag.SongsPerYear = Enumerable.Range(1999, 2023 - 1999 + 1)
+                .ToDictionary(y => y, y => songsPerYear.ContainsKey(y) ? songsPerYear[y] : 0);
 
             return View("~/Views/ArtiestInfo/Index.cshtml");
         }
+
 
         public async Task<IActionResult> SongDetail(int songId)
         {

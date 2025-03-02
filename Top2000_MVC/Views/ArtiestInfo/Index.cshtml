@@ -1,6 +1,7 @@
 ﻿@{
     var artist = ViewBag.Artist as Top2000_MVC.Models.Top2000Artist;
     var wiki = ViewBag.Wiki;
+    @using Newtonsoft.Json
 }
 
 @if (artist != null)
@@ -21,7 +22,59 @@
                 }
             </div>
         </div>
+
+        <div class="artist-statistics">
+            <h3>Aantal liedjes in de Top 2000 per jaar</h3>
+            <canvas id="songsChart"></canvas>
+        </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+                document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById('songsChart').getContext('2d');
+        var years = @Html.Raw(JsonConvert.SerializeObject(ViewBag.SongsPerYear.Keys));
+        var songCounts = @Html.Raw(JsonConvert.SerializeObject(ViewBag.SongsPerYear.Values));
+
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Aantal liedjes',
+                        data: songCounts,
+                        borderColor: 'red',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Jaar'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Aantal liedjes'
+                            },
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 }
 else
 {

@@ -172,31 +172,31 @@ namespace Top2000_API.Controllers
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(
-    int page = 1, int pageSize = 7, string sortBy = "positie", int? top2000Year = null, string searchQuery = "", string searchType = "title")
-        {
-            Console.WriteLine($"searchType ontvangen: '{searchType}'");
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 7,
+    [FromQuery] string sortBy = "positie",
+    [FromQuery] int? top2000Year = null,
+    [FromQuery] string searchQuery = "",
+    [FromQuery] string searchType = "")
 
+        {
             var skip = (page - 1) * pageSize;
             IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
 
-            // **Stap 1: Zoekfilter toepassen (NIEUW TOEGEVOEGD)**
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 if (searchType == "artist")
                 {
-                    // Zoeken op artiest
                     songsQuery = songsQuery.Where(s => s.Artiest != null && s.Artiest.Naam.Contains(searchQuery));
                 }
                 else
                 {
-                    // Zoeken op titel
                     songsQuery = songsQuery.Where(s => s.Titel.Contains(searchQuery));
                 }
             }
 
 
 
-            // **Stap 2: Sorteer de resultaten**
             switch (sortBy.ToLower())
             {
                 case "artiest":
@@ -218,7 +218,6 @@ namespace Top2000_API.Controllers
                     break;
             }
 
-            // **Stap 3: Paginering toepassen**
             var totalSongs = await songsQuery.CountAsync();
             var songs = await songsQuery.Skip(skip).Take(pageSize).ToListAsync();
 

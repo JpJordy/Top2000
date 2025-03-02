@@ -20,7 +20,6 @@ namespace Top2000_API.Controllers
         [HttpDelete("deleteUser/{username}")]
         public async Task<IActionResult> DeleteUser(string username)
         {
-            // Zoek de gebruiker in de database
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
 
             if (user == null)
@@ -28,11 +27,58 @@ namespace Top2000_API.Controllers
                 return NotFound("Gebruiker niet gevonden.");
             }
 
-            // Verwijder de gebruiker
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Gebruiker succesvol verwijderd." });
+        }
+
+        [HttpGet("getUsers")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var usersWithRoles = await _context.Users
+                .Select(u => new
+                {
+                    u.UserName,
+                    u.Role
+                })
+                .ToListAsync();
+
+            return Ok(usersWithRoles);
+        }
+
+        [HttpPost("updateRole/{username}/{role}")]
+        public async Task<IActionResult> UpdateRole(string username, string role)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return NotFound("Gebruiker niet gevonden.");
+            }
+
+            user.Role = role;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"Rol van gebruiker {username} succesvol gewijzigd naar {role}." });
+        }
+
+        [HttpPost("removeAdmin/{username}")]
+        public async Task<IActionResult> RemoveAdmin(string username)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+
+            if (user == null)
+            {
+                return NotFound("Gebruiker niet gevonden.");
+            }
+
+            user.Role = "User";
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = $"Rol van gebruiker {username} succesvol gewijzigd naar User." });
         }
     }
 }

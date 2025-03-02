@@ -182,7 +182,7 @@ namespace Top2000_API.Controllers
             // **Stap 1: Zoekfilter toepassen (NIEUW TOEGEVOEGD)**
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                if (searchType?.Trim().Equals("artist", StringComparison.OrdinalIgnoreCase) == true)
+                if (searchType == "artist")
                 {
                     // Zoeken op artiest
                     songsQuery = songsQuery.Where(s => s.Artiest != null && s.Artiest.Naam.Contains(searchQuery));
@@ -193,6 +193,8 @@ namespace Top2000_API.Controllers
                     songsQuery = songsQuery.Where(s => s.Titel.Contains(searchQuery));
                 }
             }
+
+
 
             // **Stap 2: Sorteer de resultaten**
             switch (sortBy.ToLower())

@@ -28,14 +28,13 @@ namespace Top2000_MVC.Controllers
 
             if (!string.IsNullOrEmpty(searchQuery))
             {
-                if (searchType == "artist")
-                {
-                    apiUrl += $"&artist={Uri.EscapeDataString(searchQuery)}";
-                }
-                else
-                {
-                    apiUrl += $"&searchQuery={Uri.EscapeDataString(searchQuery)}";
-                }
+                apiUrl += $"&searchQuery={Uri.EscapeDataString(searchQuery)}";
+
+            }
+
+            if (!string.IsNullOrEmpty(searchType))
+            {
+                apiUrl += $"&searchType={Uri.EscapeDataString(searchType)}";
             }
 
             if (!string.IsNullOrEmpty(sortBy))
@@ -146,7 +145,6 @@ namespace Top2000_MVC.Controllers
 
             ViewBag.Artist = apiResponse;
             ViewBag.Wiki = wiki;
-            // Zorg ervoor dat alle jaren van 1999 tot 2023 erin zitten, zelfs als er geen data is
             ViewBag.SongsPerYear = Enumerable.Range(1999, 2023 - 1999 + 1)
                 .ToDictionary(y => y, y => songsPerYear.ContainsKey(y) ? songsPerYear[y] : 0);
 

@@ -112,7 +112,7 @@ namespace Top2000_API.Controllers
             var authResponse = await _httpClient.PostAsync(authUrl, authRequestBody);
             var authResponseContent = await authResponse.Content.ReadAsStringAsync();
             var authResponseJson = JsonConvert.DeserializeObject<dynamic>(authResponseContent);
-
+                
             var accessToken = authResponseJson.access_token;
 
             var searchUrl = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
@@ -152,36 +152,41 @@ namespace Top2000_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7, string sortBy = "positie", int? top2000Year = null)
+        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(
+    int page = 1, int pageSize = 7, string sortBy = "positie", int? top2000Year = null, string searchQuery = "", string searchType = "title")
         {
-            var skip = (page - 1) * pageSize;
+            Console.WriteLine($"searchType ontvangen: '{searchType}'");
 
+            var skip = (page - 1) * pageSize;
             IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
 
-            if (top2000Year.HasValue)
+            // **Stap 1: Zoekfilter toepassen (NIEUW TOEGEVOEGD)**
+            if (!string.IsNullOrEmpty(searchQuery))
             {
-                var songIdsInTop2000Year = _context.Lijsten
-                    .Where(l => l.Jaar == top2000Year.Value)
-                    .Select(l => l.SongId)
-                    .ToList();
-
-                songsQuery = songsQuery.Where(s => songIdsInTop2000Year.Contains(s.SongId));
+                if (searchType?.Trim().Equals("artist", StringComparison.OrdinalIgnoreCase) == true)
+                {
+                    // Zoeken op artiest
+                    songsQuery = songsQuery.Where(s => s.Artiest != null && s.Artiest.Naam.Contains(searchQuery));
+                }
+                else
+                {
+                    // Zoeken op titel
+                    songsQuery = songsQuery.Where(s => s.Titel.Contains(searchQuery));
+                }
             }
 
+            // **Stap 2: Sorteer de resultaten**
             switch (sortBy.ToLower())
             {
                 case "artiest":
                     songsQuery = songsQuery.OrderBy(s => s.Artiest.Naam);
                     break;
-
                 case "jaar":
                     songsQuery = songsQuery.OrderBy(s => s.Jaar);
                     break;
-
                 case "titel":
                     songsQuery = songsQuery.OrderBy(s => s.Titel);
                     break;
-
                 case "positie":
                 default:
                     songsQuery = from song in songsQuery
@@ -192,7 +197,8 @@ namespace Top2000_API.Controllers
                     break;
             }
 
-
+            // **Stap 3: Paginering toepassen**
+            var totalSongs = await songsQuery.CountAsync();
             var songs = await songsQuery.Skip(skip).Take(pageSize).ToListAsync();
 
             var songDtos = new List<SongWithArtistDTO>();
@@ -222,17 +228,12 @@ namespace Top2000_API.Controllers
                 songDtos.Add(songDto);
             }
 
-            var totalSongs = await _context.Songs.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalSongs / pageSize);
 
-            var response = new
-            {
-                Songs = songDtos,
-                TotalPages = totalPages
-            };
-
-            return Ok(response);
+            return Ok(new { Songs = songDtos, TotalPages = totalPages });
         }
+
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SongWithArtistDTO>> GetSong(int id)

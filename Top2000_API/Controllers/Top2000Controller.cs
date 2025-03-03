@@ -7,6 +7,7 @@ using System.Net.Http;
 using Top2000_API.Data;
 using System.Threading.Tasks;
 using Top2000_API.Models;
+using Microsoft.Data.SqlClient.DataClassification;
 
 namespace Top2000_API.Controllers
 {
@@ -35,8 +36,14 @@ namespace Top2000_API.Controllers
             public int DurationMs { get; set; }  
             public int? Popularity { get; set; }
             public string? SpotifyUrls { get; set; }
+            public List<NoteringDTO>? Noteringen { get; set; }
         }
 
+        public class NoteringDTO
+        {
+            public int Jaar { get; set; }
+            public int Positie { get; set; }
+        }
 
         public class ArtistDTO
         {
@@ -264,6 +271,13 @@ namespace Top2000_API.Controllers
 
             if (song == null) return NotFound();
 
+            // Haal noteringen van het liedje in de Top 2000 op
+            var rankings = await _context.Lijsten
+                .Where(l => l.SongId == id && l.Jaar >= 1999)
+                .OrderBy(l => l.Jaar)
+                .Select(l => new NoteringDTO { Jaar = l.Jaar, Positie = l.Positie })
+                .ToListAsync();
+
             var (albumCoverUrl, durationMs, popularity, spotifyUrls) = await GetTrackInfoAsync(song.Titel, song.Artiest.Naam);
 
             var songDto = new SongWithArtistDTO
@@ -271,12 +285,13 @@ namespace Top2000_API.Controllers
                 SongId = song.SongId,
                 Titel = song.Titel,
                 Jaar = song.Jaar,
-                Afbeelding = albumCoverUrl, 
+                Afbeelding = albumCoverUrl,
                 Lyrics = song.Lyrics,
                 Youtube = song.Youtube,
                 DurationMs = durationMs,
                 Popularity = popularity,
                 SpotifyUrls = spotifyUrls,
+                Noteringen = rankings,
                 Artiest = new ArtistDTO
                 {
                     ArtiestId = song.Artiest.ArtiestId,

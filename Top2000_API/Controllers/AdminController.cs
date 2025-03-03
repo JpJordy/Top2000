@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Top2000_API.Data;
 using System.Threading.Tasks;
+using Top2000_API.Models;
 
 namespace Top2000_API.Controllers
 {
@@ -80,5 +81,25 @@ namespace Top2000_API.Controllers
 
             return Ok(new { message = $"Rol van gebruiker {username} succesvol gewijzigd naar User." });
         }
+
+        [HttpPut("updateSong/{id}")]
+        public async Task<IActionResult> UpdateSong(int id, [FromBody] UpdateSongDto songDto)
+        {
+            var song = await _context.Songs.FindAsync(id);
+
+            if (song == null)
+            {
+                return NotFound("Nummer niet gevonden.");
+            }
+
+            song.Lyrics = songDto.Lyrics;
+            song.Afbeelding = songDto.Afbeelding;
+            song.Youtube = songDto.Youtube;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
+        }
+
     }
 }

@@ -183,6 +183,7 @@ namespace Top2000_MVC.Controllers
             ViewBag.Youtube = song.Youtube;
             ViewBag.Popularity = song.Popularity;
             ViewBag.SpotifyUrl = song.SpotifyUrls;
+            ViewBag.Noteringen = song.Noteringen;
 
             return View("~/Views/SongInfo/Index.cshtml");
         }

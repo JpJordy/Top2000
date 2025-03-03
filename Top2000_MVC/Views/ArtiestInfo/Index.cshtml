@@ -24,7 +24,6 @@
         </div>
 
         <div class="artist-statistics">
-            <h3>Aantal liedjes in de Top 2000 per jaar</h3>
             <canvas id="songsChart"></canvas>
         </div>
     </div>
@@ -46,7 +45,8 @@
                         data: songCounts,
                         borderColor: 'red',
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: true
+                        fill: true,
+                        tension: 0.4
                     }]
                 },
                 options: {
@@ -54,8 +54,20 @@
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Aantal Liedjes per Jaar',
+                            font: {
+                                size: 18,
+                                weight: 'bold',
+                            },
+                            color: 'white',
+                            padding: {
+                                bottom: 20
                         }
-                    },
+                    }
+                },
                     scales: {
                         x: {
                             title: {

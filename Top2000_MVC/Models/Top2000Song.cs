@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Top2000_MVC.Models
 {
@@ -11,8 +12,6 @@ namespace Top2000_MVC.Models
 
         public int Jaar { get; set; }
 
-        public int? Top2000Year { get; set; }  
-
         public string? Afbeelding { get; set; }
         public string? Lyrics { get; set; }
         public string? Youtube { get; set; }
@@ -23,6 +22,13 @@ namespace Top2000_MVC.Models
         public int DurationMs { get; set; }
         public int? Popularity { get; set; }
         public string? SpotifyUrls { get; set; }
-        public int? Positie { get; set; }
+
+        public List<Top2000Notering> Noteringen { get; set; } = new List<Top2000Notering>();
+    }
+
+    public class Top2000Notering
+    {
+        public int Jaar { get; set; } 
+        public int Positie { get; set; }
     }
 }

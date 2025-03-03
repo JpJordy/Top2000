@@ -24,10 +24,10 @@
     <form id="yearFilterForm" method="get" action="/Top2000">
         <span class="filter-label">Sorteer op:</span>
         <div class="filter-section">
-            <a href="/Top2000?page=@(currentPage)&sortBy=positie&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery" class="filter-button">Positie</a>
-            <a href="/Top2000?page=@(currentPage)&sortBy=artiest&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery" class="filter-button">Artiest</a>
-            <a href="/Top2000?page=@(currentPage)&sortBy=titel&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery" class="filter-button">Titel</a>
-            <a href="/Top2000?page=@(currentPage)&sortBy=jaar&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery" class="filter-button">Releasedatum</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=positie&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Positie</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=artiest&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Artiest</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=titel&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Titel</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=jaar&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Releasedatum</a>
         </div>
 
             <div class="dropdown-section">

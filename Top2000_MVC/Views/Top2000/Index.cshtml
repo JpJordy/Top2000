@@ -7,15 +7,27 @@
     int startIndex = ((currentPage - 1) * songsPerPage) + 1;
 }
 
+<form asp-action="Index" method="get" class="d-flex mb-3 mt-4 align-items-center">
+    <div class="input-group">
+        <select name="searchType" class="form-select">
+            <option value="title" selected="@(ViewBag.SearchType == "title" ? "selected" : null)">Liedje</option>
+            <option value="artist" selected="@(ViewBag.SearchType == "artist" ? "selected" : null)">Artiest</option>
+        </select>
+        <input type="text" name="searchQuery" class="form-control" placeholder="Zoek op titel of artiest..." value="@ViewBag.SearchQuery" />
+        <button type="submit" class="btn btn-danger">Zoeken</button>
+    </div>
+</form>
+
+
 
 <div class="song-list-container">
     <form id="yearFilterForm" method="get" action="/Top2000">
         <span class="filter-label">Sorteer op:</span>
         <div class="filter-section">
-                <a href="/Top2000?page=@(currentPage)&sortBy=positie&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Positie</a>
-                <a href="/Top2000?page=@(currentPage)&sortBy=artiest&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Artiest</a>
-                <a href="/Top2000?page=@(currentPage)&sortBy=titel&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Titel</a>
-                <a href="/Top2000?page=@(currentPage)&sortBy=jaar&top2000Year=@ViewBag.SelectedTop2000Year" class="filter-button">Releasedatum</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=positie&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Positie</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=artiest&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Artiest</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=titel&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Titel</a>
+            <a href="/Top2000?page=@(currentPage)&sortBy=jaar&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="filter-button">Releasedatum</a>
         </div>
 
             <div class="dropdown-section">
@@ -62,20 +74,22 @@
         }
     </div>
 
-    <div class="pagination-container">
+    <div class="pagination-container mt-4">
         @if (currentPage > 1)
         {
-            <a href="/Top2000?page=@(currentPage - 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year" class="previous-page-button">
+            <a href="/Top2000?page=@(currentPage - 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="previous-page-button">
                 Vorige pagina
             </a>
         }
         @if (currentPage < totalPages)
         {
-            <a href="/Top2000?page=@(currentPage + 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year" class="next-page-button">
+            <a href="/Top2000?page=@(currentPage + 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="next-page-button">
                 Volgende pagina
             </a>
         }
     </div>
+
+
 
     <div class="page-info">
         @currentPage / @totalPages
@@ -134,18 +148,18 @@
         font-weight: normal; 
         color: white;
         background: transparent;
-        border: 1.5px solid #f0ad4e;
+        border: 1.5px solid red;
         border-radius: 4px; 
         text-decoration: none;
         transition: all 0.15s ease-in-out;
         text-align: center;
         display: inline-block;
-        box-shadow: 0 0 2px #f0ad4e;
+        box-shadow: 0 0 2px red;
         min-width: 75px; 
     }
 
         .filter-button:hover {
-            background: #f0ad4e;
+            background: red;
             color: white;
             text-decoration: none;
             transform: scale(1.02);
@@ -166,19 +180,19 @@
         font-weight: normal;
         color: white;
         background-color: transparent;
-        border: 1.5px solid #f0ad4e;
+        border: 1.5px solid red;
         border-radius: 4px;
         transition: all 0.15s ease-in-out;
         min-width: 75px;
         text-align: center;
         cursor: pointer;
         outline: none;
-        box-shadow: 0 0 2px #f0ad4e;
+        box-shadow: 0 0 2px red;
         overflow: hidden;
     }
 
         .year-dropdown:hover {
-            background: #f0ad4e;
+            background: red;
             color: white;
             text-decoration: none;
         }

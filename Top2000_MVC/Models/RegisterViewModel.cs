@@ -14,5 +14,6 @@ namespace Top2000_MVC.Models
         [Required(ErrorMessage = "Bevestig je wachtwoord.")]
         [Compare("Password", ErrorMessage = "Wachtwoorden komen niet overeen.")]
         public string ConfirmPassword { get; set; }
+
     }
 }

@@ -139,10 +139,16 @@
                                         <li><a class="dropdown-item" asp-controller="Profile" asp-action="Index">Profiel</a></li>
                                         <li>
                                             <form asp-controller="Login" asp-action="Logout" method="post">
-                                                <button type="submit" class="dropdown-item">Uitloggen</button>
+                                                <a asp-controller="Login" asp-action="Logout" class="dropdown-item">Uitloggen</a>
                                             </form>
                                         </li>
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="Admin" asp-action="Index">Admin Paneel</a></li>
+                                        }
                                     </ul>
+
                                 </li>
                             }
                             else

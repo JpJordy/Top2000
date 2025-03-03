@@ -20,13 +20,13 @@ namespace Top2000_MVC.Controllers
             _httpClient = httpClientFactory.CreateClient("ApiClient");
         }
 
-        [HttpGet] // ✅ Hiermee wordt de loginpagina correct geladen
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
 
-        [HttpPost] // ✅ Verstuurt login-informatie naar de API
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid)
@@ -34,7 +34,6 @@ namespace Top2000_MVC.Controllers
 
             var json = JsonSerializer.Serialize(model);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-
             var response = await _httpClient.PostAsync("login", content);
 
             if (response.IsSuccessStatusCode)
@@ -45,25 +44,25 @@ namespace Top2000_MVC.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties
-                );
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                return RedirectToAction("Index", "Home"); // ✅ Login geslaagd, doorsturen naar Home
+                Console.WriteLine("✅ Cookie zou nu aangemaakt moeten zijn!");
+                Console.WriteLine($"🔍 Ingelogde gebruiker: {user.Username}");
+
+                return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError("", "Ongeldige inloggegevens.");
             return View(model);
         }
 
-        [HttpGet] // ✅ Uitlogfunctionaliteit
+        [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

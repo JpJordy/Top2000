@@ -112,7 +112,7 @@ namespace Top2000_API.Controllers
             var authResponse = await _httpClient.PostAsync(authUrl, authRequestBody);
             var authResponseContent = await authResponse.Content.ReadAsStringAsync();
             var authResponseJson = JsonConvert.DeserializeObject<dynamic>(authResponseContent);
-
+                
             var accessToken = authResponseJson.access_token;
 
             var searchUrl = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
@@ -151,40 +151,63 @@ namespace Top2000_API.Controllers
             return Ok(artistInfo);
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(int page = 1, int pageSize = 7, string sortBy = "positie", int? top2000Year = null)
+        [HttpGet("artist/{artistName}/songs-per-year")]
+        public async Task<ActionResult<Dictionary<int, int>>> GetSongsPerYear(string artistName)
         {
-            var skip = (page - 1) * pageSize;
-
-            IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
-
-            if (top2000Year.HasValue)
+            var artist = await _context.Artiesten.FirstOrDefaultAsync(a => a.Naam == artistName);
+            if (artist == null)
             {
-                var songIdsInTop2000Year = _context.Lijsten
-                    .Where(l => l.Jaar == top2000Year.Value)
-                    .Select(l => l.SongId)
-                    .ToList();
-
-                songsQuery = songsQuery.Where(s => songIdsInTop2000Year.Contains(s.SongId));
+                return NotFound("Artiest niet gevonden");
             }
 
-            Console.WriteLine($"Sorteren op: {sortBy}");
-            Console.WriteLine($"Top 2000 Jaar: {top2000Year}");
+            var songsPerYear = await _context.Lijsten
+                .Where(l => _context.Songs.Any(s => s.SongId == l.SongId && s.ArtiestId == artist.ArtiestId))
+                .GroupBy(l => l.Jaar)
+                .Select(g => new { Jaar = g.Key, Aantal = g.Count() })
+                .ToDictionaryAsync(g => g.Jaar, g => g.Aantal);
+
+            return Ok(songsPerYear);
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<SongWithArtistDTO>>> GetSongs(
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 7,
+    [FromQuery] string sortBy = "positie",
+    [FromQuery] int? top2000Year = null,
+    [FromQuery] string searchQuery = "",
+    [FromQuery] string searchType = "")
+
+        {
+            var skip = (page - 1) * pageSize;
+            IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                if (searchType == "artist")
+                {
+                    songsQuery = songsQuery.Where(s => s.Artiest != null && s.Artiest.Naam.Contains(searchQuery));
+                }
+                else
+                {
+                    songsQuery = songsQuery.Where(s => s.Titel.Contains(searchQuery));
+                }
+            }
+
+
 
             switch (sortBy.ToLower())
             {
                 case "artiest":
                     songsQuery = songsQuery.OrderBy(s => s.Artiest.Naam);
                     break;
-
                 case "jaar":
                     songsQuery = songsQuery.OrderBy(s => s.Jaar);
                     break;
-
                 case "titel":
                     songsQuery = songsQuery.OrderBy(s => s.Titel);
                     break;
-
                 case "positie":
                 default:
                     songsQuery = from song in songsQuery
@@ -195,8 +218,7 @@ namespace Top2000_API.Controllers
                     break;
             }
 
-            Console.WriteLine($"Gebruikte query: {songsQuery.ToString()}");
-
+            var totalSongs = await songsQuery.CountAsync();
             var songs = await songsQuery.Skip(skip).Take(pageSize).ToListAsync();
 
             var songDtos = new List<SongWithArtistDTO>();
@@ -226,17 +248,12 @@ namespace Top2000_API.Controllers
                 songDtos.Add(songDto);
             }
 
-            var totalSongs = await _context.Songs.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalSongs / pageSize);
 
-            var response = new
-            {
-                Songs = songDtos,
-                TotalPages = totalPages
-            };
-
-            return Ok(response);
+            return Ok(new { Songs = songDtos, TotalPages = totalPages });
         }
+
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<SongWithArtistDTO>> GetSong(int id)

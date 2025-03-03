@@ -1,0 +1,39 @@
+﻿@model Top2000_MVC.ViewModels.SongViewModel
+
+@{
+    ViewData["Title"] = "Bewerk Nummer";
+}
+
+<h2 class="text-center mt-4">Bewerk Nummer: @Model.Titel</h2>
+
+<div class="container mt-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center">@TempData["ErrorMessage"]</div>
+    }
+
+    <form asp-action="EditSong" method="post">
+        <input type="hidden" asp-for="SongId" />
+
+        <div class="mb-3">
+            <label class="form-label">Songtekst:</label>
+            <textarea asp-for="Lyrics" class="form-control" rows="5"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Afbeelding URL:</label>
+            <input asp-for="Afbeelding" class="form-control" type="text" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">YouTube-link:</label>
+            <input asp-for="Youtube" class="form-control" type="text" />
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">Opslaan</button>
+    </form>
+</div>

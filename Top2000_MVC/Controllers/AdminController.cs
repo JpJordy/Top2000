@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Top2000_MVC.ViewModels;
 
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
@@ -106,18 +107,58 @@ public class AdminController : Controller
 
         return RedirectToAction("Index");
     }
-}
 
-public class AdminUserWithRole
-{
-    public string UserName { get; set; }
-    public string Role { get; set; }
-}
+    public async Task<IActionResult> EditSong(int id)
+    {
+        var response = await _httpClient.GetAsync($"songs/{id}");
 
-public class AdminUserList
-{
-    [JsonPropertyName("$values")]
-    public List<AdminUserWithRole> Values { get; set; }
-}
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["ErrorMessage"] = "Kon nummer niet ophalen.";
+            return RedirectToAction("Index");
+        }
 
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var song = JsonSerializer.Deserialize<SongViewModel>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        return View(song);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> EditSong(SongViewModel song)
+    {
+        var updateDto = new
+        {
+            Lyrics = song.Lyrics,
+            Afbeelding = song.Afbeelding,
+            Youtube = song.Youtube
+        };
+
+        var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), System.Text.Encoding.UTF8, "application/json");
+        var response = await _httpClient.PutAsync($"admin/updateSong/{song.SongId}", jsonContent);
+
+        if (response.IsSuccessStatusCode)
+        {
+            TempData["SuccessMessage"] = "Nummergegevens succesvol bijgewerkt!";
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Fout bij het bijwerken van het nummer.";
+            return View(song);
+        }
+    }
+
+    public class AdminUserWithRole
+    {
+        public string UserName { get; set; }
+        public string Role { get; set; }
+    }
+
+    public class AdminUserList
+    {
+        [JsonPropertyName("$values")]
+        public List<AdminUserWithRole> Values { get; set; }
+    }
+}
 

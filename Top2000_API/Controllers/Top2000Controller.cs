@@ -8,6 +8,7 @@ using Top2000_API.Data;
 using System.Threading.Tasks;
 using Top2000_API.Models;
 using Microsoft.Data.SqlClient.DataClassification;
+using Top2000_MVC.Models;
 
 namespace Top2000_API.Controllers
 {
@@ -260,6 +261,53 @@ namespace Top2000_API.Controllers
             return Ok(new { Songs = songDtos, TotalPages = totalPages });
         }
 
+        [HttpGet("all")]
+        public async Task<ActionResult<SongApiResponse>> GetAllSongs(int page = 1, int pageSize = 6)
+        {
+            var skip = (page - 1) * pageSize;
+
+            try
+            {
+                var totalSongsCount = await _context.Songs.CountAsync();
+                IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
+
+                var songs = await songsQuery.Skip(skip).Take(pageSize).ToListAsync();
+
+                var songDtos = new List<SongWithArtistDTO>();
+                foreach (var s in songs)
+                {
+                    var (albumCoverUrl, durationMs, popularity, spotifyUrl) = await GetTrackInfoAsync(s.Titel, s.Artiest.Naam);
+
+                    var songDto = new SongWithArtistDTO
+                    {
+                        SongId = s.SongId,
+                        Titel = s.Titel,
+                        Jaar = s.Jaar,
+                        Afbeelding = albumCoverUrl,
+                        Lyrics = s.Lyrics,
+                        Youtube = s.Youtube,
+                        DurationMs = durationMs,
+                        Artiest = new ArtistDTO
+                        {
+                            ArtiestId = s.Artiest.ArtiestId,
+                            Naam = s.Artiest.Naam,
+                            Wiki = s.Artiest.Wiki,
+                            Foto = s.Artiest.Foto
+                        }
+                    };
+
+                    songDtos.Add(songDto);
+                }
+
+                var totalPages = (int)Math.Ceiling(totalSongsCount / (double)pageSize);
+
+                return Ok(new { Songs = songDtos, TotalPages = totalPages });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Er is een fout opgetreden bij het ophalen van de liedjes.");
+            }
+        }
 
 
         [HttpGet("{id}")]
@@ -271,7 +319,6 @@ namespace Top2000_API.Controllers
 
             if (song == null) return NotFound();
 
-            // Haal noteringen van het liedje in de Top 2000 op
             var rankings = await _context.Lijsten
                 .Where(l => l.SongId == id && l.Jaar >= 1999)
                 .OrderBy(l => l.Jaar)

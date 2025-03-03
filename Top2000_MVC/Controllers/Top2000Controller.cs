@@ -19,6 +19,7 @@ namespace Top2000_MVC.Controllers
         }
         public async Task<IActionResult> Index(int page = 1, int? top2000Year = null, string? artist = null, string? sortBy = null, string? searchQuery = null, string? searchType = "title")
         {
+
             if (page > 334)
             {
                 page = 334;
@@ -105,8 +106,6 @@ namespace Top2000_MVC.Controllers
 
             return View();
         }
-
-
 
         public async Task<IActionResult> ArtistInfo(string artistName, string wiki)
         {

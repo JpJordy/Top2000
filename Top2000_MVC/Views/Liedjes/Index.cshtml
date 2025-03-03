@@ -1,5 +1,198 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    var songs = ViewBag.Songs as List<Top2000_MVC.Models.Top2000Song>;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var selectedTop2000Year = ViewBag.SelectedTop2000Year;
+    int songsPerPage = 6;
+    int startIndex = ((currentPage - 1) * songsPerPage) + 1;
 }
+
+<div class="song-list-container">
+    <div class="song-list">
+        @foreach (var song in songs.Select((value, index) => new { Value = value, Index = index }))
+        {
+            var durationMinutes = song.Value.DurationMs / 60000;
+            var durationSeconds = (song.Value.DurationMs % 60000) / 1000;
+
+            <div class="song-item">
+                <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
+                    <div class="song-rank">@(startIndex + song.Index)</div>
+                </a>
+                <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
+                    <img src="@song.Value.Afbeelding" alt="Album cover" class="song-image" />
+                </a>
+                <div class="song-details">
+                    <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">@song.Value.Titel</a>
+                    <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = song.Value.Artiest?.Naam, wiki = song.Value.Artiest?.Wiki })" class="artist-link">
+                        @song.Value.Artiest?.Naam
+                    </a>
+                </div>
+                <div class="song-year">@song.Value.Jaar</div>
+                <div class="song-duration">
+                    @String.Format("{0:D2}:{1:D2}", durationMinutes, durationSeconds)
+                </div>
+                @if (!string.IsNullOrEmpty(song.Value.Youtube))
+                {
+                    <a href="@song.Value.Youtube" target="_blank" class="youtube-link">▶</a>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="pagination-container">
+        @if (currentPage > 1)
+        {
+            <a href="/Liedjes?page=@(currentPage - 1)" class="previous-page-button">
+                Vorige pagina
+            </a>
+        }
+        @if (currentPage < totalPages)
+        {
+            <a href="/Liedjes?page=@(currentPage + 1)" class="next-page-button">
+                Volgende pagina
+            </a>
+        }
+    </div>
+
+    <div class="page-info">
+        @currentPage / @totalPages
+    </div>
+</div>
+
+
+<style>
+    .song-list-container {
+        width: 100%;
+        background-color: #121212;
+        padding: 30px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        max-width: 1000px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .song-list {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        color: #f0f0f0;
+    }
+
+    .song-item {
+        display: flex;
+        flex-direction: column;
+        background-color: #252525;
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+        .song-item:hover {
+            background-color: #353535;
+            transform: translateY(-5px);
+        }
+
+    .song-rank {
+        font-size: 22px;
+        font-weight: bold;
+        color: #8a8a8a;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .song-title {
+        font-size: 18px;
+        color: #ffffff;
+        text-decoration: none;
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+
+        .song-title:hover {
+            color: #d1d1d1;
+        }
+
+    .artist-link {
+        font-size: 16px;
+        color: #a0c4ff;
+        text-decoration: none;
+        margin-bottom: 10px;
+        transition: color 0.3s ease;
+    }
+
+        .artist-link:hover {
+            color: #c7e3ff;
+        }
+
+    .song-year {
+        color: #b3b3b3;
+        font-size: 14px;
+        margin-top: 5px;
+    }
+
+    .song-duration {
+        color: #b3b3b3;
+        font-size: 14px;
+    }
+
+    .song-image {
+        width: 100px;
+        height: 100px;
+        border-radius: 10px;
+        object-fit: cover;
+        margin-bottom: 15px;
+        align-self: center;
+    }
+
+    .youtube-link {
+        font-size: 20px;
+        color: #f0f0f0;
+        text-decoration: none;
+        margin-top: 15px;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .previous-page-button,
+    .next-page-button {
+        display: inline-block;
+        padding: 10px 20px;
+        color: white !important;
+        transition: background-color 0.2s, color 0.2s, border 0.2s;
+        text-decoration: none;
+        border-radius: 5px;
+        border: 2px solid red;
+        text-align: center;
+        font-size: 1rem;
+        min-width: 120px;
+        box-sizing: border-box;
+    }
+
+        .previous-page-button:hover,
+        .next-page-button:hover {
+            background-color: red;
+            color: white;
+            text-decoration: none !important;
+            border-color: red;
+        }
+
+    .page-info {
+        color: #f0f0f0;
+        font-size: 16px;
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>

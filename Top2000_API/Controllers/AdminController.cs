@@ -101,5 +101,26 @@ namespace Top2000_API.Controllers
             return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
         }
 
+
+        [HttpPut("updateArtiest/{id}")]
+        public async Task<IActionResult> UpdateArtiest(int id, [FromBody] UpdateArtiestDto artiestDto)
+        {
+            var artiest = await _context.Artiesten.FindAsync(id);
+
+            if (artiest == null)
+            {
+                return NotFound("Nummer niet gevonden.");
+            }
+
+            artiest.Wiki = artiestDto.Wiki;
+            artiest.Foto = artiestDto.Foto;
+            artiest.Biografie = artiestDto.Biografie;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
+        }
+
+
     }
 }

@@ -124,6 +124,9 @@ public class AdminController : Controller
         return View(song);
     }
 
+
+
+
     [HttpPost]
     public async Task<IActionResult> EditSong(SongViewModel song)
     {
@@ -146,6 +149,59 @@ public class AdminController : Controller
         {
             TempData["ErrorMessage"] = "Fout bij het bijwerken van het nummer.";
             return View(song);
+        }
+    }
+
+
+
+
+    public async Task<IActionResult> EditArtiest(int id)
+    {
+        var response = await _httpClient.GetAsync($"artiesten/{id}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["ErrorMessage"] = "Kon artiest niet ophalen.";
+            return RedirectToAction("Index");
+        }
+
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var artiest = JsonSerializer.Deserialize<ArtiestViewModel>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+        if (artiest == null)
+        {
+            TempData["ErrorMessage"] = "Artiest niet gevonden.";
+            return RedirectToAction("Index");
+        }
+
+        return View(artiest);
+    }
+
+
+
+
+    [HttpPost]
+    public async Task<IActionResult> EditArtiest(ArtiestViewModel artiest)
+    {
+        var updateDto = new
+        {
+            wiki = artiest.Wiki,
+            biografie = artiest.Biografie,
+            foto = artiest.Foto
+        };
+
+        var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), System.Text.Encoding.UTF8, "application/json");
+        var response = await _httpClient.PutAsync($"admin/updateArtiest/{artiest.ArtiestId}", jsonContent);
+
+        if (response.IsSuccessStatusCode)
+        {
+            TempData["SuccessMessage"] = "Nummergegevens succesvol bijgewerkt!";
+            return RedirectToAction("Index");
+        }
+        else
+        {
+            TempData["ErrorMessage"] = "Fout bij het bijwerken van het nummer.";
+            return View(artiest);
         }
     }
 

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Top2000_MVC.ViewModels;
 
+
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
@@ -110,6 +111,7 @@ public class AdminController : Controller
 
     public async Task<IActionResult> EditSong(int id)
     {
+        Console.WriteLine($"Ophalen van artiest met ID: {id}");
         var response = await _httpClient.GetAsync($"songs/{id}");
 
         if (!response.IsSuccessStatusCode)
@@ -153,19 +155,21 @@ public class AdminController : Controller
     }
 
 
-
-
-    public async Task<IActionResult> EditArtiest(int id)
+    public async Task<IActionResult> EditArtiest(int artiestid)
     {
-        var response = await _httpClient.GetAsync($"artiesten/{id}");
+        Console.WriteLine($"Ophalen van artiest met ID: {artiestid}");
+        var response = await _httpClient.GetAsync($"songs/{artiestid}");
+        Console.WriteLine($"Status code: {response.StatusCode}");
 
-        if (!response.IsSuccessStatusCode)
+        string jsonString = await response.Content.ReadAsStringAsync(); // <-- Lege of ongeldige JSON
+        Console.WriteLine("API Response JSON: " + jsonString); // Voeg deze toe om te controleren
+        if (string.IsNullOrWhiteSpace(jsonString))
         {
-            TempData["ErrorMessage"] = "Kon artiest niet ophalen.";
+            Console.WriteLine("Fout: API-response is leeg!");
+            TempData["ErrorMessage"] = "Kon artiest niet ophalen (lege response).";
             return RedirectToAction("Index");
         }
 
-        var jsonString = await response.Content.ReadAsStringAsync();
         var artiest = JsonSerializer.Deserialize<ArtiestViewModel>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         if (artiest == null)
@@ -176,7 +180,6 @@ public class AdminController : Controller
 
         return View(artiest);
     }
-
 
 
 

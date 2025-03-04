@@ -102,10 +102,10 @@ namespace Top2000_API.Controllers
         }
 
 
-        [HttpPut("updateArtiest/{id}")]
-        public async Task<IActionResult> UpdateArtiest(int id, [FromBody] UpdateArtiestDto artiestDto)
+        [HttpPut("updateArtiest/{artiestid}")]
+        public async Task<IActionResult> UpdateArtiest(int artiestid, [FromBody] UpdateArtiestDto artiestDto)
         {
-            var artiest = await _context.Artiesten.FindAsync(id);
+            var artiest = await _context.Artiesten.FindAsync(artiestid);
 
             if (artiest == null)
             {

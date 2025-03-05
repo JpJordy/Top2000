@@ -2,17 +2,19 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Top2000_MVC.ViewModels;
 
-
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly HttpClient _httpClient;
+    private const string ApiBaseUrl = "https://localhost:7020/api"; // Zet hier de juiste API URL
 
     public AdminController(IHttpClientFactory httpClientFactory)
     {
@@ -23,7 +25,7 @@ public class AdminController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync("admin/getUsers");
+            var response = await _httpClient.GetAsync($"{ApiBaseUrl}/admin/getUsers");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -32,26 +34,17 @@ public class AdminController : Controller
             }
 
             var jsonString = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("API Response JSON: " + jsonString);
-
             var userList = JsonSerializer.Deserialize<AdminUserList>(jsonString, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
 
-            if (userList == null || userList.Values == null || !userList.Values.Any())
-            {
-                TempData["ErrorMessage"] = "Geen gebruikers gevonden.";
-                return View(new List<AdminUserWithRole>());
-            }
-
-            var users = userList.Values;
-            ViewBag.Users = users;
+            var users = userList?.Values ?? new List<AdminUserWithRole>();
             return View(users);
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Fout bij ophalen gebruikers: " + ex.Message);
+            Console.WriteLine($"Fout bij ophalen gebruikers: {ex.Message}");
             TempData["ErrorMessage"] = "Er is een fout opgetreden bij het ophalen van de gebruikers.";
             return View(new List<AdminUserWithRole>());
         }
@@ -60,16 +53,11 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateRole(string username)
     {
-        var response = await _httpClient.PostAsync($"admin/updateRole/{username}/Admin", null);
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/admin/updateRole/{username}/Admin", null);
 
-        if (response.IsSuccessStatusCode)
-        {
-            TempData["SuccessMessage"] = $"Rol van gebruiker {username} succesvol gewijzigd naar Admin!";
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Fout bij het wijzigen van de rol.";
-        }
+        TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
+            response.IsSuccessStatusCode ? $"Rol van gebruiker {username} succesvol gewijzigd naar Admin!" :
+            "Fout bij het wijzigen van de rol.";
 
         return RedirectToAction("Index");
     }
@@ -77,42 +65,30 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> RemoveAdmin(string username)
     {
-        var response = await _httpClient.PostAsync($"admin/removeAdmin/{username}", null);
+        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/admin/removeAdmin/{username}", null);
 
-        if (response.IsSuccessStatusCode)
-        {
-            TempData["SuccessMessage"] = $"Rol van gebruiker {username} succesvol gewijzigd naar User!";
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Fout bij het verwijderen van admin.";
-        }
+        TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
+            response.IsSuccessStatusCode ? $"Rol van gebruiker {username} succesvol gewijzigd naar User!" :
+            "Fout bij het verwijderen van admin.";
 
         return RedirectToAction("Index");
     }
 
-
     [HttpPost]
     public async Task<IActionResult> DeleteUser(string username)
     {
-        var response = await _httpClient.DeleteAsync($"admin/deleteUser/{username}");
+        var response = await _httpClient.DeleteAsync($"{ApiBaseUrl}/admin/deleteUser/{username}");
 
-        if (response.IsSuccessStatusCode)
-        {
-            TempData["SuccessMessage"] = $"Gebruiker {username} succesvol verwijderd!";
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Fout bij verwijderen gebruiker.";
-        }
+        TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
+            response.IsSuccessStatusCode ? $"Gebruiker {username} succesvol verwijderd!" :
+            "Fout bij verwijderen gebruiker.";
 
         return RedirectToAction("Index");
     }
 
     public async Task<IActionResult> EditSong(int id)
     {
-        Console.WriteLine($"Ophalen van artiest met ID: {id}");
-        var response = await _httpClient.GetAsync($"songs/{id}");
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/songs/{id}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -120,90 +96,62 @@ public class AdminController : Controller
             return RedirectToAction("Index");
         }
 
-        var jsonString = await response.Content.ReadAsStringAsync();
-        var song = JsonSerializer.Deserialize<SongViewModel>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
+        var song = await response.Content.ReadFromJsonAsync<SongViewModel>();
         return View(song);
     }
-
-
-
 
     [HttpPost]
     public async Task<IActionResult> EditSong(SongViewModel song)
     {
-        var updateDto = new
-        {
-            Lyrics = song.Lyrics,
-            Afbeelding = song.Afbeelding,
-            Youtube = song.Youtube
-        };
+        var updateDto = new { song.Lyrics, song.Afbeelding, song.Youtube };
+        var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
 
-        var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), System.Text.Encoding.UTF8, "application/json");
-        var response = await _httpClient.PutAsync($"admin/updateSong/{song.SongId}", jsonContent);
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/admin/updateSong/{song.SongId}", jsonContent);
 
-        if (response.IsSuccessStatusCode)
-        {
-            TempData["SuccessMessage"] = "Nummergegevens succesvol bijgewerkt!";
-            return RedirectToAction("Index");
-        }
-        else
-        {
-            TempData["ErrorMessage"] = "Fout bij het bijwerken van het nummer.";
-            return View(song);
-        }
+        TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
+            response.IsSuccessStatusCode ? "Nummergegevens succesvol bijgewerkt!" :
+            "Fout bij het bijwerken van het nummer.";
+
+        return response.IsSuccessStatusCode ? RedirectToAction("Index") : View(song);
     }
 
-
-    public async Task<IActionResult> EditArtiest(int artiestid)
+    public async Task<IActionResult> EditArtiest(int id)
     {
-        Console.WriteLine($"Ophalen van artiest met ID: {artiestid}");
-        var response = await _httpClient.GetAsync($"songs/{artiestid}");
-        Console.WriteLine($"Status code: {response.StatusCode}");
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getArtiest/{id}");
 
-        string jsonString = await response.Content.ReadAsStringAsync(); // <-- Lege of ongeldige JSON
-        Console.WriteLine("API Response JSON: " + jsonString); // Voeg deze toe om te controleren
-        if (string.IsNullOrWhiteSpace(jsonString))
-        {
-            Console.WriteLine("Fout: API-response is leeg!");
-            TempData["ErrorMessage"] = "Kon artiest niet ophalen (lege response).";
-            return RedirectToAction("Index");
-        }
-
-        var artiest = JsonSerializer.Deserialize<ArtiestViewModel>(jsonString, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-        if (artiest == null)
+        if (!response.IsSuccessStatusCode)
         {
             TempData["ErrorMessage"] = "Artiest niet gevonden.";
             return RedirectToAction("Index");
         }
 
+        var artiest = await response.Content.ReadFromJsonAsync<ArtiestViewModel>();
         return View(artiest);
     }
-
-
 
     [HttpPost]
     public async Task<IActionResult> EditArtiest(ArtiestViewModel artiest)
     {
         var updateDto = new
         {
-            wiki = artiest.Wiki,
-            biografie = artiest.Biografie,
-            foto = artiest.Foto
+            Wiki = artiest.Wiki,
+            Biografie = artiest.Biografie,
+            Foto = artiest.Foto
         };
 
-        var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), System.Text.Encoding.UTF8, "application/json");
-        var response = await _httpClient.PutAsync($"admin/updateArtiest/{artiest.ArtiestId}", jsonContent);
+        // Verzend de PUT-aanroep naar de API
+        var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateArtiest/{artiest.ArtiestId}", jsonContent);
 
         if (response.IsSuccessStatusCode)
         {
-            TempData["SuccessMessage"] = "Nummergegevens succesvol bijgewerkt!";
+            TempData["SuccessMessage"] = "Artiestgegevens succesvol bijgewerkt!";
             return RedirectToAction("Index");
         }
         else
         {
-            TempData["ErrorMessage"] = "Fout bij het bijwerken van het nummer.";
+            TempData["ErrorMessage"] = response;
             return View(artiest);
         }
     }
@@ -220,4 +168,3 @@ public class AdminController : Controller
         public List<AdminUserWithRole> Values { get; set; }
     }
 }
-

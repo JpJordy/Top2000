@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Differencing;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Top2000_MVC.Models;
 
+
 public class ArtistApiResponse
 {
     public List<Top2000Artist> Artists { get; set; }
     public int TotalPages { get; set; }
 }
+
 
 public class ArtiestenController : Controller
 {
@@ -28,9 +31,11 @@ public class ArtiestenController : Controller
 
         if (!response.IsSuccessStatusCode)
         {
+            Console.WriteLine("API Error: " + response.StatusCode);
             ViewBag.Artists = new List<Top2000Artist>();
             ViewBag.TotalPages = 1;
-            return View();
+            ViewBag.CurrentPage = 1;
+            return View("~/Views/Artiesten/Index.cshtml");
         }
 
         var json = await response.Content.ReadAsStringAsync();
@@ -38,14 +43,26 @@ public class ArtiestenController : Controller
 
         if (apiResponse == null || apiResponse.Artists.Count == 0)
         {
+            Console.WriteLine("API response is null or does not contain artists.");
             ViewBag.Artists = new List<Top2000Artist>();
             ViewBag.TotalPages = 1;
-            return View();
+            ViewBag.CurrentPage = 1;
+            return View("~/Views/Artiesten/Index.cshtml");
         }
 
-        ViewBag.Artists = apiResponse.Artists;
-        ViewBag.TotalPages = apiResponse.TotalPages;
+        List<Top2000Artist> artists = apiResponse.Artists.Select(artist => new Top2000Artist
+        {
+            ArtiestId = artist.ArtiestId,
+            Naam = artist.Naam,
+            Wiki = artist.Wiki,
+            Genres = artist.Genres,
+            Foto = artist.Foto
+        }).ToList();
 
-        return View();
+        ViewBag.Artists = artists;
+        ViewBag.TotalPages = apiResponse.TotalPages;
+        ViewBag.CurrentPage = page;
+
+        return View("~/Views/Artiesten/Index.cshtml");
     }
 }

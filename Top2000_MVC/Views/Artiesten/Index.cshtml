@@ -11,7 +11,7 @@
         @foreach (var artist in artists.Select((value, index) => new { Value = value, Index = index }))
         {
             <div class="artist-item">
-                <a href="@Url.Action("ArtistDetail", "Top2000", new { artistName = artist.Value.Naam })" class="artist-title">
+                <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = artist.Value.Naam })" class="artist-title">
                     <!-- Nummer van de artiest -->
                     <div class="artist-rank">@(startIndex + artist.Index)</div>
                 </a>
@@ -19,14 +19,13 @@
                 <!-- Foto van de artiest -->
                 @if (!string.IsNullOrEmpty(artist.Value.Foto))
                 {
-                    <a href="@Url.Action("ArtistDetail", "Top2000", new { artistName = artist.Value.Naam })" class="artist-title">
+                    <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = artist.Value.Naam })" class="artist-title">
                         <img src="@artist.Value.Foto" alt="Artist Image" class="artist-image" />
                     </a>
                 }
-
                 <div class="artist-details">
                     <!-- Naam van de artiest -->
-                    <a href="@Url.Action("ArtistDetail", "Top2000", new { artistName = artist.Value.Naam })" class="artist-name">
+                    <a href="@Url.Action("ArtistInfo", "Top2000", new { artistName = artist.Value.Naam, wiki = artist.Value.Wiki })" class="artist-name">
                         @artist.Value.Naam
                     </a>
                 </div>
@@ -90,10 +89,10 @@
         text-align: center;
     }
 
-    .artist-item:hover {
-        background-color: #353535;
-        transform: translateY(-5px);
-    }
+        .artist-item:hover {
+            background-color: #353535;
+            transform: translateY(-5px);
+        }
 
     .artist-rank {
         font-size: 22px;
@@ -111,15 +110,15 @@
         transition: color 0.3s ease;
     }
 
-    .artist-title:hover {
-        color: #d1d1d1;
-    }
+        .artist-title:hover {
+            color: #d1d1d1;
+        }
 
     .artist-details {
         display: flex;
         flex-direction: column;
         gap: 10px;
-        align-items: center;
+        align-items: center; /* Center de tekst en links */
     }
 
     .artist-name {
@@ -129,9 +128,42 @@
         font-weight: bold;
     }
 
-    .artist-name:hover {
-        color: #c7e3ff;
+        .artist-name:hover {
+            color: #c7e3ff;
+        }
+
+    .artist-wiki {
+        font-size: 14px;
+        color: #f0f0f0;
+        text-decoration: none;
     }
+
+        .artist-wiki:hover {
+            color: red;
+            transition: color 0.3s ease;
+        }
+
+    .artist-genres {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .more-info-box {
+        background-color: #444;
+        color: #f0f0f0;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 14px;
+        text-decoration: none;
+        text-align: center;
+        transition: background-color 0.3s ease;
+    }
+
+        .more-info-box:hover {
+            background-color: #f06c00;
+            color: white;
+        }
 
     .artist-image {
         width: 150px;
@@ -165,13 +197,13 @@
         box-sizing: border-box;
     }
 
-    .previous-page-button:hover,
-    .next-page-button:hover {
-        background-color: red;
-        color: white;
-        text-decoration: none !important;
-        border-color: red;
-    }
+        .previous-page-button:hover,
+        .next-page-button:hover {
+            background-color: red;
+            color: white;
+            text-decoration: none !important;
+            border-color: red;
+        }
 
     .page-info {
         color: #f0f0f0;

@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Top2000_MVC.Models;
 using System.Linq;
 using static Top2000_API.Controllers.SongsController;
+using Microsoft.CodeAnalysis.Differencing;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 [Route("api/artists")]
 [ApiController]
@@ -29,13 +31,18 @@ public class ArtistsController : ControllerBase
         var clientSecret = "8ea52916b7dc4ec8985fab26c97ca725"; // Spotify Client Secret
 
         var authUrl = "https://accounts.spotify.com/api/token";
-        var authRequestBody = new FormUrlEncodedContent(new[] { new KeyValuePair<string, string>("grant_type", "client_credentials") });
+        var authRequestBody = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("grant_type", "client_credentials")
+        });
 
         _httpClient.DefaultRequestHeaders.Clear();
         _httpClient.DefaultRequestHeaders.Add("Authorization", "Basic " + Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(clientId + ":" + clientSecret)));
 
         var authResponse = await _httpClient.PostAsync(authUrl, authRequestBody);
-        var authResponseJson = JsonConvert.DeserializeObject<dynamic>(await authResponse.Content.ReadAsStringAsync());
+        var authResponseContent = await authResponse.Content.ReadAsStringAsync();
+        var authResponseJson = JsonConvert.DeserializeObject<dynamic>(authResponseContent);
+
         var accessToken = authResponseJson.access_token;
 
         var searchUrl = $"https://api.spotify.com/v1/search?q={Uri.EscapeDataString(artistName)}&type=artist&limit=1";
@@ -51,13 +58,14 @@ public class ArtistsController : ControllerBase
         }
 
         var artist = searchResult.artists.items[0];
-        var artistImage = artist.images.Count > 0 ? (string)artist.images[0].url : null;
+        var artistImage = artist.images.Count > 0 ? (string)artist.images[0].url : null; // Foto ophalen
 
         return new ArtistDTO
         {
             Naam = artist.name,
-            Foto = artistImage,
-            Genres = artist.genres.ToObject<List<string>>() ?? new List<string>()
+            Foto = artistImage, // Foto URL toevoegen aan DTO
+            Genres = artist.genres.ToObject<List<string>>() ?? new List<string>(),
+            Wiki = artist.wiki // Als wiki beschikbaar is
         };
     }
 
@@ -72,12 +80,13 @@ public class ArtistsController : ControllerBase
 
         var artistDtos = new List<ArtistDTO>();
 
+        // Voor elke artiest in de database, extraheer de Spotify-informatie (inclusief foto)
         foreach (var artist in artists)
         {
             var artistInfo = await GetArtistInfoAsync(artist.Naam);
             if (artistInfo != null)
             {
-                artistDtos.Add(artistInfo);
+                artistDtos.Add(artistInfo); // Voeg de informatie toe aan de lijst
             }
         }
 

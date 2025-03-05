@@ -101,6 +101,18 @@ namespace Top2000_API.Controllers
             return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
         }
 
+        [HttpGet("getArtiest/{artiestid}")]
+        public async Task<IActionResult> GetArtiest(int artiestid)
+        {
+            var artiest = await _context.Artiesten.FindAsync(artiestid);
+
+            if (artiest == null)
+            {
+                return NotFound("Artiest niet gevonden.");
+            }
+
+            return Ok(artiest);
+        }
 
         [HttpPut("updateArtiest/{artiestid}")]
         public async Task<IActionResult> UpdateArtiest(int artiestid, [FromBody] UpdateArtiestDto artiestDto)
@@ -120,7 +132,5 @@ namespace Top2000_API.Controllers
 
             return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
         }
-
-
     }
 }

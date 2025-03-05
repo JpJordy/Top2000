@@ -97,36 +97,42 @@
         gap: 20px;
         margin: 20px auto;
         max-width: 900px;
+        flex-wrap: wrap; /* Laat de items automatisch naar de volgende rij gaan als ze niet passen */
     }
 
     .dj-group {
         display: flex;
         gap: 20px;
+        flex-wrap: wrap; /* Laat de items naar een nieuwe regel gaan als er geen ruimte meer is */
+        justify-content: center; /* Zorg ervoor dat de items gecentreerd worden */
     }
 
     .dj {
         text-align: center;
+        flex: 1 1 200px; /* Zorg ervoor dat elk item ten minste 200px breed is en zich kan aanpassen */
+        margin-bottom: 20px; /* Voeg wat ruimte toe tussen de DJ's */
     }
 
-    .dj img {
-        margin-top: 20px;
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 10px;
-        transition: transform 0.3s ease; /* Add transition for hover effect */
-    }
+        .dj img {
+            margin-top: 20px;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease; /* Voeg een hover effect toe voor afbeeldingen */
+        }
 
-    .dj img:hover {
-        transform: scale(1.1); /* Scale up the image on hover */
-    }
+            .dj img:hover {
+                transform: scale(1.1); /* Vergroot de afbeelding bij hover */
+            }
 
-    .dj p {
-        margin-top: 10px;
-        font-size: 18px;
-        font-weight: bold;
-        color: #22282e;
-    }
+        .dj p {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #22282e;
+        }
+
 
     #nextButton {
         margin-top: 10px;

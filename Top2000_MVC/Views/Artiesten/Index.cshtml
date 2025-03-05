@@ -1,5 +1,182 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    var artists = ViewBag.Artists as List<Top2000_MVC.Models.Top2000Artist>;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    int artistsPerPage = 6;
+    int startIndex = ((currentPage - 1) * artistsPerPage) + 1;
 }
+
+<div class="artist-list-container">
+    <div class="artist-list">
+        @foreach (var artist in artists.Select((value, index) => new { Value = value, Index = index }))
+        {
+            <div class="artist-item">
+                <a href="@Url.Action("ArtistDetail", "Top2000", new { artistName = artist.Value.Naam })" class="artist-title">
+                    <!-- Nummer van de artiest -->
+                    <div class="artist-rank">@(startIndex + artist.Index)</div>
+                </a>
+
+                <!-- Foto van de artiest -->
+                @if (!string.IsNullOrEmpty(artist.Value.Foto))
+                {
+                    <a href="@Url.Action("ArtistDetail", "Top2000", new { artistName = artist.Value.Naam })" class="artist-title">
+                        <img src="@artist.Value.Foto" alt="Artist Image" class="artist-image" />
+                    </a>
+                }
+
+                <div class="artist-details">
+                    <!-- Naam van de artiest -->
+                    <a href="@Url.Action("ArtistDetail", "Top2000", new { artistName = artist.Value.Naam })" class="artist-name">
+                        @artist.Value.Naam
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-container">
+        @if (currentPage > 1)
+        {
+            <a href="/Artiesten?page=@(currentPage - 1)" class="previous-page-button">
+                Vorige pagina
+            </a>
+        }
+        @if (currentPage < totalPages)
+        {
+            <a href="/Artiesten?page=@(currentPage + 1)" class="next-page-button">
+                Volgende pagina
+            </a>
+        }
+    </div>
+
+    <div class="page-info">
+        @currentPage / @totalPages
+    </div>
+</div>
+
+<style>
+    .artist-list-container {
+        width: 100%;
+        background-color: #121212;
+        padding: 30px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        max-width: 1000px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+    .artist-list {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        color: #f0f0f0;
+    }
+
+    .artist-item {
+        display: flex;
+        flex-direction: column;
+        background-color: #252525;
+        border-radius: 12px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .artist-item:hover {
+        background-color: #353535;
+        transform: translateY(-5px);
+    }
+
+    .artist-rank {
+        font-size: 22px;
+        font-weight: bold;
+        color: #8a8a8a;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .artist-title {
+        font-size: 18px;
+        color: #ffffff;
+        text-decoration: none;
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+
+    .artist-title:hover {
+        color: #d1d1d1;
+    }
+
+    .artist-details {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .artist-name {
+        font-size: 16px;
+        color: #f0f0f0;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .artist-name:hover {
+        color: #c7e3ff;
+    }
+
+    .artist-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 10px;
+        object-fit: cover;
+        margin-bottom: 15px;
+        align-self: center;
+    }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+    }
+
+    .previous-page-button,
+    .next-page-button {
+        display: inline-block;
+        padding: 10px 20px;
+        color: white !important;
+        transition: background-color 0.2s, color 0.2s, border 0.2s;
+        text-decoration: none;
+        border-radius: 5px;
+        border: 2px solid red;
+        text-align: center;
+        font-size: 1rem;
+        min-width: 120px;
+        box-sizing: border-box;
+    }
+
+    .previous-page-button:hover,
+    .next-page-button:hover {
+        background-color: red;
+        color: white;
+        text-decoration: none !important;
+        border-color: red;
+    }
+
+    .page-info {
+        color: #f0f0f0;
+        font-size: 16px;
+        margin-top: 20px;
+        text-align: center;
+    }
+</style>

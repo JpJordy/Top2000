@@ -29,23 +29,23 @@
         <h4 class="card-title text-center">Bewerk een nummer</h4>
         <form method="get" asp-action="EditSong">
             <div class="mb-3">
-                <label for="songId" class="form-label">Nummer ID:</label>
-                <input type="number" id="songId" name="id" class="form-control" required />
+                <label for="songTitle" class="form-label">Nummer Titel:</label>
+                <input type="text" id="songTitle" name="title" class="form-control" required />
             </div>
             <button type="submit" class="btn btn-primary w-100">Bewerk nummer</button>
         </form>
     </div>
+
     <div class="card shadow-sm p-4 mt-4">
         <h4 class="card-title text-center">Bewerk een artiest</h4>
         <form method="get" asp-action="EditArtiest">
             <div class="mb-3">
-                <label for="artistId" class="form-label">Artiest id</label>
-                <input type="number" id="artistId" name="id" class="form-control" required />
+                <label for="artistName" class="form-label">Artiest Naam:</label>
+                <input type="text" id="artistName" name="naam" class="form-control" required />
             </div>
             <button type="submit" class="btn btn-success w-100">Bewerk artiest</button>
         </form>
     </div>
-
 
     <div class="card shadow-sm p-4 mt-4">
         <h4 class="card-title text-center">Gebruikerslijst</h4>

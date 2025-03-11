@@ -82,11 +82,22 @@ namespace Top2000_API.Controllers
             return Ok(new { message = $"Rol van gebruiker {username} succesvol gewijzigd naar User." });
         }
 
-        [HttpPut("updateSong/{id}")]
-        public async Task<IActionResult> UpdateSong(int id, [FromBody] UpdateSongDto songDto)
+        [HttpGet("getSong/{title}")]
+        public async Task<IActionResult> GetSong(string title)
         {
-            var song = await _context.Songs.FindAsync(id);
+            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Titel == title);
+            if (song == null)
+            {
+                return NotFound("Nummer niet gevonden.");
+            }
 
+            return Ok(song);
+        }
+
+        [HttpPut("updateSong/{title}")]
+        public async Task<IActionResult> UpdateSong(string title, [FromBody] UpdateSongDto songDto)
+        {
+            var song = await _context.Songs.FirstOrDefaultAsync(s => s.Titel == title);
             if (song == null)
             {
                 return NotFound("Nummer niet gevonden.");
@@ -101,11 +112,10 @@ namespace Top2000_API.Controllers
             return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
         }
 
-        [HttpGet("getArtiest/{artiestid}")]
-        public async Task<IActionResult> GetArtiest(int artiestid)
+        [HttpGet("getArtiest/{naam}")]
+        public async Task<IActionResult> GetArtiest(string naam)
         {
-            var artiest = await _context.Artiesten.FindAsync(artiestid);
-
+            var artiest = await _context.Artiesten.FirstOrDefaultAsync(a => a.Naam == naam);
             if (artiest == null)
             {
                 return NotFound("Artiest niet gevonden.");
@@ -114,14 +124,14 @@ namespace Top2000_API.Controllers
             return Ok(artiest);
         }
 
-        [HttpPut("updateArtiest/{artiestid}")]
-        public async Task<IActionResult> UpdateArtiest(int artiestid, [FromBody] UpdateArtiestDto artiestDto)
-        {
-            var artiest = await _context.Artiesten.FindAsync(artiestid);
 
+        [HttpPut("updateArtiest/{naam}")]
+        public async Task<IActionResult> UpdateArtiest(string naam, [FromBody] UpdateArtiestDto artiestDto)
+        {
+            var artiest = await _context.Artiesten.FirstOrDefaultAsync(a => a.Naam == naam);
             if (artiest == null)
             {
-                return NotFound("Nummer niet gevonden.");
+                return NotFound("Artiest niet gevonden.");
             }
 
             artiest.Wiki = artiestDto.Wiki;
@@ -130,7 +140,7 @@ namespace Top2000_API.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Nummergegevens succesvol bijgewerkt." });
+            return Ok(new { message = "Artiestgegevens succesvol bijgewerkt." });
         }
     }
 }

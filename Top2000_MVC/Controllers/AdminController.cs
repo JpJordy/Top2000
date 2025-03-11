@@ -86,13 +86,13 @@ public class AdminController : Controller
         return RedirectToAction("Index");
     }
 
-    public async Task<IActionResult> EditSong(int id)
+    public async Task<IActionResult> EditSong(string title)
     {
-        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/songs/{id}");
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getSong/{title}");
 
         if (!response.IsSuccessStatusCode)
         {
-            TempData["ErrorMessage"] = "Kon nummer niet ophalen.";
+            TempData["ErrorMessage"] = "Nummer niet gevonden.";
             return RedirectToAction("Index");
         }
 
@@ -103,10 +103,22 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> EditSong(SongViewModel song)
     {
-        var updateDto = new { song.Lyrics, song.Afbeelding, song.Youtube };
+        if (!ModelState.IsValid)
+        {
+            TempData["ErrorMessage"] = "Ongeldige gegevens.";
+            return View(song);
+        }
+
+        var updateDto = new
+        {
+            Afbeelding = song.Afbeelding,
+            Lyrics = song.Lyrics,
+            Youtube = song.Youtube
+        };
+
         var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/admin/updateSong/{song.SongId}", jsonContent);
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateSong/{song.Titel}", jsonContent);
 
         TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
             response.IsSuccessStatusCode ? "Nummergegevens succesvol bijgewerkt!" :
@@ -115,9 +127,10 @@ public class AdminController : Controller
         return response.IsSuccessStatusCode ? RedirectToAction("Index") : View(song);
     }
 
-    public async Task<IActionResult> EditArtiest(int id)
+
+    public async Task<IActionResult> EditArtiest(string naam)
     {
-        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getArtiest/{id}");
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getArtiest/{naam}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -139,10 +152,9 @@ public class AdminController : Controller
             Foto = artiest.Foto
         };
 
-        // Verzend de PUT-aanroep naar de API
         var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateArtiest/{artiest.ArtiestId}", jsonContent);
+        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateArtiest/{artiest.Naam}", jsonContent);
 
         if (response.IsSuccessStatusCode)
         {

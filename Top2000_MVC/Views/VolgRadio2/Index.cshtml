@@ -6,12 +6,14 @@
     <title>NPO Radio 2 Volg</title>
     <style>
         body {
-            background-color: #22282E;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #22282e 60vh, white 60vh);
+            background-color: white;
             color: white;
             font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
         }
 
         .container {
@@ -54,6 +56,19 @@
                 .contact-box ul li {
                     margin-bottom: 16px;
                 }
+
+                /* Nieuwe stijl voor horizontale social media knoppen */
+                .contact-box ul.socials {
+                    display: flex;
+                    justify-content: center;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    padding-left: 0;
+                }
+
+                    .contact-box ul.socials li {
+                        margin-bottom: 0;
+                    }
 
         .contact-btn {
             background-color: #D32F2F;
@@ -122,7 +137,7 @@
             <div class="col-md-6 d-flex">
                 <div class="contact-box w-100">
                     <h2>Sociale Media</h2>
-                    <ul>
+                    <ul class="socials">
                         <li><a href="#" class="contact-btn">Facebook</a></li>
                         <li><a href="#" class="contact-btn">Twitter</a></li>
                         <li><a href="#" class="contact-btn">Instagram</a></li>

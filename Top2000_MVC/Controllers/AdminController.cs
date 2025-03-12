@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
 using Top2000_MVC.Models;
@@ -9,11 +10,12 @@ using Top2000_MVC.ViewModels;
 public class AdminController : Controller
 {
     private readonly HttpClient _httpClient;
-    private const string ApiBaseUrl = "https://localhost:7020/api";
+    private readonly ApiSettings _apiSettings;
 
-    public AdminController(IHttpClientFactory httpClientFactory)
+    public AdminController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
     {
         _httpClient = httpClientFactory.CreateClient("ApiClient");
+        _apiSettings = apiSettings.Value;
     }
 
     [HttpGet]
@@ -21,7 +23,7 @@ public class AdminController : Controller
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiBaseUrl}/admin/getUsers");
+            var response = await _httpClient.GetAsync($"{_apiSettings.BaseUrl}/admin/getUsers");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -49,7 +51,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> EditSong(string title)
     {
-        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getSong/{title}");
+        var response = await _httpClient.GetAsync($"{_apiSettings.BaseUrl}/Admin/getSong/{title}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -64,7 +66,7 @@ public class AdminController : Controller
     [HttpGet]
     public async Task<IActionResult> EditArtiest(string naam)
     {
-        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getArtiest/{naam}");
+        var response = await _httpClient.GetAsync($"{_apiSettings.BaseUrl}/Admin/getArtiest/{naam}");
 
         if (!response.IsSuccessStatusCode)
         {
@@ -79,7 +81,7 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> UpdateRole(string username)
     {
-        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/admin/updateRole/{username}/Admin", null);
+        var response = await _httpClient.PostAsync($"{_apiSettings.BaseUrl}/admin/updateRole/{username}/Admin", null);
 
         TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
             response.IsSuccessStatusCode ? $"Rol van gebruiker {username} succesvol gewijzigd naar Admin!" :
@@ -91,7 +93,7 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> RemoveAdmin(string username)
     {
-        var response = await _httpClient.PostAsync($"{ApiBaseUrl}/admin/removeAdmin/{username}", null);
+        var response = await _httpClient.PostAsync($"{_apiSettings.BaseUrl}/admin/removeAdmin/{username}", null);
 
         TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
             response.IsSuccessStatusCode ? $"Rol van gebruiker {username} succesvol gewijzigd naar User!" :
@@ -103,7 +105,7 @@ public class AdminController : Controller
     [HttpPost]
     public async Task<IActionResult> DeleteUser(string username)
     {
-        var response = await _httpClient.DeleteAsync($"{ApiBaseUrl}/admin/deleteUser/{username}");
+        var response = await _httpClient.DeleteAsync($"{_apiSettings.BaseUrl}/admin/deleteUser/{username}");
 
         TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
             response.IsSuccessStatusCode ? $"Gebruiker {username} succesvol verwijderd!" :
@@ -130,7 +132,7 @@ public class AdminController : Controller
 
         var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateSong/{song.Titel}", jsonContent);
+        var response = await _httpClient.PutAsync($"{_apiSettings.BaseUrl}/Admin/updateSong/{song.Titel}", jsonContent);
 
         if (response.IsSuccessStatusCode)
         {
@@ -157,7 +159,7 @@ public class AdminController : Controller
 
         var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
 
-        var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateArtiest/{artiest.Naam}", jsonContent);
+        var response = await _httpClient.PutAsync($"{_apiSettings.BaseUrl}/Admin/updateArtiest/{artiest.Naam}", jsonContent);
 
         if (response.IsSuccessStatusCode)
         {

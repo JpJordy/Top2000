@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
+using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Top2000_MVC.Models;
 
 namespace Top2000_MVC.Controllers
@@ -10,10 +9,12 @@ namespace Top2000_MVC.Controllers
     public class RegisterController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly ApiSettings _apiSettings;
 
-        public RegisterController(IHttpClientFactory httpClientFactory)
+        public RegisterController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _apiSettings = apiSettings.Value;
         }
 
         [HttpGet]
@@ -34,12 +35,12 @@ namespace Top2000_MVC.Controllers
             var contentString = await content.ReadAsStringAsync();
             Console.WriteLine(contentString);
 
-            var response = await _httpClient.PostAsync("register", content);
+            var response = await _httpClient.PostAsync($"{_apiSettings.BaseUrl}/register", content);
 
             if (response.IsSuccessStatusCode)
             {
                 TempData["SuccessMessage"] = "Registratie gelukt! Je kunt nu inloggen.";
-                return RedirectToAction("Login", "Login"); // ✅ Stuur door naar loginpagina
+                return RedirectToAction("Login", "Login");
             }
             else
             {

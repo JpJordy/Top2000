@@ -1,26 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using Top2000_MVC.Models;
 using Top2000_MVC.ViewModels;
 
 [Authorize(Roles = "Admin")]
 public class AdminController : Controller
 {
     private readonly HttpClient _httpClient;
-    private const string ApiBaseUrl = "https://localhost:7020/api"; // Zet hier de juiste API URL
+    private const string ApiBaseUrl = "https://localhost:7020/api";
 
     public AdminController(IHttpClientFactory httpClientFactory)
     {
         _httpClient = httpClientFactory.CreateClient("ApiClient");
     }
 
+    [HttpGet]
     public async Task<IActionResult> Index()
     {
         try
@@ -48,6 +44,36 @@ public class AdminController : Controller
             TempData["ErrorMessage"] = "Er is een fout opgetreden bij het ophalen van de gebruikers.";
             return View(new List<AdminUserWithRole>());
         }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditSong(string title)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getSong/{title}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["ErrorMessage"] = "Nummer niet gevonden.";
+            return RedirectToAction("Index");
+        }
+
+        var song = await response.Content.ReadFromJsonAsync<SongViewModel>();
+        return View(song);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditArtiest(string naam)
+    {
+        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getArtiest/{naam}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            TempData["ErrorMessage"] = "Artiest niet gevonden.";
+            return RedirectToAction("Index");
+        }
+
+        var artiest = await response.Content.ReadFromJsonAsync<ArtiestViewModel>();
+        return View(artiest);
     }
 
     [HttpPost]
@@ -86,20 +112,6 @@ public class AdminController : Controller
         return RedirectToAction("Index");
     }
 
-    public async Task<IActionResult> EditSong(string title)
-    {
-        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getSong/{title}");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            TempData["ErrorMessage"] = "Nummer niet gevonden.";
-            return RedirectToAction("Index");
-        }
-
-        var song = await response.Content.ReadFromJsonAsync<SongViewModel>();
-        return View(song);
-    }
-
     [HttpPost]
     public async Task<IActionResult> EditSong(SongViewModel song)
     {
@@ -111,35 +123,26 @@ public class AdminController : Controller
 
         var updateDto = new
         {
-            Afbeelding = song.Afbeelding,
-            Lyrics = song.Lyrics,
-            Youtube = song.Youtube
+            song.Afbeelding,
+            song.Lyrics,
+            song.Youtube
         };
 
         var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
 
         var response = await _httpClient.PutAsync($"{ApiBaseUrl}/Admin/updateSong/{song.Titel}", jsonContent);
 
-        TempData[response.IsSuccessStatusCode ? "SuccessMessage" : "ErrorMessage"] =
-            response.IsSuccessStatusCode ? "Nummergegevens succesvol bijgewerkt!" :
-            "Fout bij het bijwerken van het nummer.";
-
-        return response.IsSuccessStatusCode ? RedirectToAction("Index") : View(song);
-    }
-
-
-    public async Task<IActionResult> EditArtiest(string naam)
-    {
-        var response = await _httpClient.GetAsync($"{ApiBaseUrl}/Admin/getArtiest/{naam}");
-
-        if (!response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
         {
-            TempData["ErrorMessage"] = "Artiest niet gevonden.";
+            TempData["SuccessMessage"] = "Nummergegevens succesvol bijgewerkt!";
             return RedirectToAction("Index");
         }
-
-        var artiest = await response.Content.ReadFromJsonAsync<ArtiestViewModel>();
-        return View(artiest);
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            TempData["ErrorMessage"] = string.IsNullOrEmpty(errorMessage) ? "Fout bij het bijwerken van het nummer." : errorMessage;
+            return View(song);
+        }
     }
 
     [HttpPost]
@@ -147,9 +150,9 @@ public class AdminController : Controller
     {
         var updateDto = new
         {
-            Wiki = artiest.Wiki,
-            Biografie = artiest.Biografie,
-            Foto = artiest.Foto
+            artiest.Wiki,
+            artiest.Biografie,
+            artiest.Foto
         };
 
         var jsonContent = new StringContent(JsonSerializer.Serialize(updateDto), Encoding.UTF8, "application/json");
@@ -163,20 +166,9 @@ public class AdminController : Controller
         }
         else
         {
-            TempData["ErrorMessage"] = response;
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            TempData["ErrorMessage"] = string.IsNullOrEmpty(errorMessage) ? "Fout bij het bijwerken van artiestgegevens." : errorMessage;
             return View(artiest);
         }
-    }
-
-    public class AdminUserWithRole
-    {
-        public string UserName { get; set; }
-        public string Role { get; set; }
-    }
-
-    public class AdminUserList
-    {
-        [JsonPropertyName("$values")]
-        public List<AdminUserWithRole> Values { get; set; }
     }
 }

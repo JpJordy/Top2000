@@ -24,6 +24,8 @@ namespace Top2000_MVC.Models
         public string? SpotifyUrls { get; set; }
 
         public List<Top2000Notering> Noteringen { get; set; } = new List<Top2000Notering>();
+        public int? VorigePositie { get; set; }
+        public int? Verschil { get; set; }
     }
 
     public class Top2000Notering

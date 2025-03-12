@@ -48,8 +48,23 @@
         {
             var durationMinutes = song.Value.DurationMs / 60000;
             var durationSeconds = (song.Value.DurationMs % 60000) / 1000;
-
             <div class="song-item">
+                <div class="song-previous-rank">
+                    <span class="previous-rank">@song.Value.VorigePositie</span>
+
+                    @if (song.Value.Verschil < 0)
+                    {
+                        <span class="rank-change up">▼</span>
+                    }
+                    else if (song.Value.Verschil > 0)
+                    {
+                        <span class="rank-change down">▲</span>
+                    }
+                    else
+                    {
+                        <span class="rank-change same">➖</span>
+                    }
+                </div>
                 <a href="@Url.Action("SongDetail", "Top2000", new { songId = song.Value.SongId })" class="song-title">
                     <div class="song-rank">@(startIndex + song.Index)</div>
                 </a>
@@ -121,6 +136,37 @@
 </script>
 
 <style>
+    .song-previous-rank {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 16px; 
+        margin-right: 10px;
+    }
+
+    .previous-rank {
+        font-weight: bold;
+        color: white;
+    }
+
+    .rank-change {
+        font-size: 20px;
+        display: inline-block;
+    }
+
+        .rank-change.up {
+            color: red;
+        }
+
+        .rank-change.down {
+            color: blue;
+        }
+
+        .rank-change.same {
+            color: gray;
+        }
+
+
     body {
         margin: 0;
         padding: 0;

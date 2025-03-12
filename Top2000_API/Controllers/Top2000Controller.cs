@@ -39,6 +39,8 @@ namespace Top2000_API.Controllers
             public int? Popularity { get; set; }
             public string? SpotifyUrls { get; set; }
             public List<NoteringDTO>? Noteringen { get; set; }
+            public int? Verschil { get; set; }
+            public int? VorigePositie { get; set; }
         }
 
         public class NoteringDTO
@@ -187,7 +189,6 @@ namespace Top2000_API.Controllers
     [FromQuery] int? top2000Year = null,
     [FromQuery] string searchQuery = "",
     [FromQuery] string searchType = "")
-
         {
             var skip = (page - 1) * pageSize;
             IQueryable<Song> songsQuery = _context.Songs.Include(s => s.Artiest);
@@ -203,8 +204,6 @@ namespace Top2000_API.Controllers
                     songsQuery = songsQuery.Where(s => s.Titel.Contains(searchQuery));
                 }
             }
-
-
 
             switch (sortBy.ToLower())
             {
@@ -236,6 +235,21 @@ namespace Top2000_API.Controllers
             {
                 var (albumCoverUrl, durationMs, popularity, spotifyUrl) = await GetTrackInfoAsync(s.Titel, s.Artiest.Naam);
 
+                var huidigePositie = _context.Lijsten.FirstOrDefault(l => l.SongId == s.SongId && l.Jaar == top2000Year)?.Positie ?? 0;
+                Console.WriteLine(top2000Year - 1);
+                var vorigePositie = _context.Lijsten.FirstOrDefault(l => l.SongId == s.SongId && l.Jaar == (top2000Year - 1))?.Positie;
+
+                int verschil = 0;
+
+                if (vorigePositie.HasValue)
+                {
+                    verschil = vorigePositie.Value - huidigePositie;
+                }
+                else
+                {
+                    verschil = 0;
+                }
+
                 var songDto = new SongWithArtistDTO
                 {
                     SongId = s.SongId,
@@ -245,6 +259,8 @@ namespace Top2000_API.Controllers
                     Lyrics = s.Lyrics,
                     Youtube = s.Youtube,
                     DurationMs = durationMs,
+                    Verschil = verschil,
+                    VorigePositie = vorigePositie,
                     Artiest = new ArtistDTO
                     {
                         ArtiestId = s.Artiest.ArtiestId,

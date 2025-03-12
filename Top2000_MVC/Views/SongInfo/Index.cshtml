@@ -10,7 +10,7 @@
     var popularity = ViewBag.Popularity;
     var spotifyUrl = ViewBag.SpotifyUrl;
     var noteringen = ViewBag.Noteringen as List<dynamic> ?? new List<dynamic>();
-
+    var lyrics = ViewBag.Lyrics;
     var durationMinutes = ViewBag.DurationMs / 60000;
     var durationSeconds = (ViewBag.DurationMs % 60000) / 1000;
 }
@@ -40,13 +40,23 @@
             {
                 <p><a href="@spotifyUrl" target="_blank" class="spotify-link">Beluister op Spotify 🎵</a></p>
             }
-        </div>
+        </div>    
+        @if (!string.IsNullOrEmpty(lyrics))
+        {
+            <div class="song-lyrics">
+                <h3>Lyrics</h3>
+                <textarea>@lyrics</textarea>
+            </div>
+        }
     </div>
+
 
     <div class="chart-container">
         <canvas id="top2000Chart"></canvas>
     </div>
+
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -60,7 +70,7 @@
         }
         var ctx = canvas.getContext('2d');
 
-        var jaren = noteringen.map(n => n.jaar); 
+        var jaren = noteringen.map(n => n.jaar);
         var posities = noteringen.map(n => n.positie);
 
         var chart = new Chart(ctx, {
@@ -123,6 +133,7 @@
         padding: 0;
         background: linear-gradient(to bottom, #22282e 60vh, white 60vh);
     }
+
     .song-info-container {
         width: 100%;
         max-width: 1200px;
@@ -205,4 +216,34 @@
         height: 400px;
         margin-top: 30px;
     }
+
+    .song-lyrics {
+        margin-top: 20px;
+        padding: 20px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        text-align: center;
+        color: white;
+        font-family: 'Courier New', Courier, monospace;
+        white-space: pre-wrap;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+        .song-lyrics textarea {
+            width: 100%;
+            max-width: 800px;
+            height: 300px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            padding: 15px;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            border-radius: 10px;
+            resize: none; /* voorkomt dat het handmatig groter/kleiner wordt */
+        }
+
+
 </style>

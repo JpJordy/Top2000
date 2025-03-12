@@ -1,8 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace Top2000_MVC
 {
@@ -12,13 +9,14 @@ namespace Top2000_MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // ✅ Configureer HttpClient voor API-communicatie
-            builder.Services.AddHttpClient("ApiClient", client =>
+            builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+
+            builder.Services.AddHttpClient("ApiClient", (serviceProvider, client) =>
             {
-                client.BaseAddress = new Uri("https://localhost:7020/api/"); // 🚨 Pas dit aan naar jouw API-poort
+                var apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
+                client.BaseAddress = new Uri(apiSettings.BaseUrl);
             });
 
-            // ✅ Voeg authenticatie toe (Cookies)
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -29,7 +27,6 @@ namespace Top2000_MVC
             builder.Services.AddAuthorization();
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpClient();
-
 
             var app = builder.Build();
 
@@ -43,7 +40,6 @@ namespace Top2000_MVC
             app.UseStaticFiles();
             app.UseRouting();
 
-            // ✅ Gebruik Authenticatie en Autorisatie
             app.UseAuthentication();
             app.UseAuthorization();
 

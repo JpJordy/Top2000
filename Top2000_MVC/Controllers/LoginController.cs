@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Net.Http;
+using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Top2000_MVC.Models;
 
 namespace Top2000_MVC.Controllers
@@ -14,10 +12,12 @@ namespace Top2000_MVC.Controllers
     public class LoginController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly ApiSettings _apiSettings;
 
-        public LoginController(IHttpClientFactory httpClientFactory)
+        public LoginController(IHttpClientFactory httpClientFactory, IOptions<ApiSettings> apiSettings)
         {
             _httpClient = httpClientFactory.CreateClient("ApiClient");
+            _apiSettings = apiSettings.Value;
         }
 
         [HttpGet]
@@ -34,7 +34,8 @@ namespace Top2000_MVC.Controllers
 
             var json = JsonSerializer.Serialize(model);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync("login", content);
+
+            var response = await _httpClient.PostAsync($"{_apiSettings.BaseUrl}/login", content);
 
             if (response.IsSuccessStatusCode)
             {
@@ -51,9 +52,6 @@ namespace Top2000_MVC.Controllers
                 var authProperties = new AuthenticationProperties { IsPersistent = true };
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
-                Console.WriteLine("✅ Cookie zou nu aangemaakt moeten zijn!");
-                Console.WriteLine($"🔍 Ingelogde gebruiker: {user.Username}");
 
                 return RedirectToAction("Index", "Home");
             }

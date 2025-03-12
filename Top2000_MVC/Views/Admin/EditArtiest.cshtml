@@ -20,18 +20,21 @@
         <input type="hidden" asp-for="ArtiestId" />
 
         <div class="mb-3">
-            <label class="form-label">Wiki:</label>
-            <input asp-for="Wiki" class="form-control" type="text" />
+            <label class="form-label" for="Wiki">Wiki:</label>
+            <input asp-for="Wiki" class="form-control" type="text" required />
+            <div class="text-danger" id="WikiError">Dit veld is verplicht.</div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Biografie:</label>
-            <textarea asp-for="Biografie" class="form-control" rows="5"></textarea>
+            <label class="form-label" for="Biografie">Biografie:</label>
+            <textarea asp-for="Biografie" class="form-control" rows="5" required></textarea>
+            <div class="text-danger" id="BiografieError">Dit veld is verplicht.</div>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Foto URL:</label>
-            <input asp-for="Foto" class="form-control" type="text" />
+            <label class="form-label" for="Foto">Foto URL:</label>
+            <input asp-for="Foto" class="form-control" type="text" required />
+            <div class="text-danger" id="FotoError">Dit veld is verplicht.</div>
         </div>
 
         <button type="submit" class="btn btn-primary w-100">Opslaan</button>

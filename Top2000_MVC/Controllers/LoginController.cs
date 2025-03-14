@@ -52,6 +52,8 @@ namespace Top2000_MVC.Controllers
 
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
 
+                Console.WriteLine("✅ Cookie zou nu aangemaakt moeten zijn!");
+                Console.WriteLine($"🔍 Ingelogde gebruiker: {user.Username}");
 
                 return RedirectToAction("Index", "Home");
             }

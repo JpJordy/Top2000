@@ -33,4 +33,10 @@ namespace Top2000_MVC.Models
         public int Jaar { get; set; } 
         public int Positie { get; set; }
     }
+
+    public class SongApiResponse
+    {
+        public List<Top2000Song> Songs { get; set; } = new List<Top2000Song>();
+        public int TotalPages { get; set; }
+    }
 }

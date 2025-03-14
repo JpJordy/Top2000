@@ -90,24 +90,37 @@
     </div>
 
     <div class="pagination-container mt-4">
-        @if (currentPage > 1)
-        {
-            <a href="/Top2000?page=@(currentPage - 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="previous-page-button">
-                Vorige pagina
-            </a>
+        @{
+            int maxPagesToShow = 15;
+            int halfPageRange = maxPagesToShow / 2;
+            int startPage = Math.Max(1, currentPage - halfPageRange);
+            int endPage = Math.Min(totalPages, currentPage + halfPageRange);
+
+            if (endPage - startPage < maxPagesToShow - 1)
+            {
+                if (startPage == 1)
+                    endPage = Math.Min(totalPages, startPage + maxPagesToShow - 1);
+                else if (endPage == totalPages)
+                    startPage = Math.Max(1, endPage - maxPagesToShow + 1);
+            }
         }
-        @if (currentPage < totalPages)
+
+        @if (startPage > 1)
         {
-            <a href="/Top2000?page=@(currentPage + 1)&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="next-page-button">
-                Volgende pagina
-            </a>
+            <a href="/Top2000?page=1&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="page-button">1</a>
+            <span class="dots">...</span>
         }
-    </div>
 
+        @for (int i = startPage; i <= endPage; i++)
+        {
+            <a href="/Top2000?page=@i&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="page-button @(i == currentPage ? "active" : "")">@i</a>
+        }
 
-
-    <div class="page-info">
-        @currentPage / 334
+        @if (endPage < totalPages)
+        {
+            <span class="dots">...</span>
+            <a href="/Top2000?page=@totalPages&sortBy=@ViewBag.SortBy&top2000Year=@ViewBag.SelectedTop2000Year&searchQuery=@ViewBag.SearchQuery&searchType=@ViewBag.SearchType" class="page-button">@totalPages</a>
+        }
     </div>
 </div>
 
@@ -329,33 +342,42 @@
     .pagination-container {
         display: flex;
         justify-content: center;
-        gap: 10px;
-        margin-top: 5px;
+        gap: 5px;
+        margin-top: 10px;
         flex-wrap: wrap;
     }
 
-    .previous-page-button,
-    .next-page-button {
+    .page-button {
         display: inline-block;
-        padding: 10px 20px;
-        color: white !important;
-        transition: background-color 0.2s, color 0.2s, border 0.2s;
-        text-decoration: none;
-        border-radius: 5px;
+        padding: 8px 12px;
+        color: white;
+        background: transparent;
         border: 2px solid red;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
         text-align: center;
-        font-size: 1rem;
-        min-width: 120px;
-        box-sizing: border-box;
+        min-width: 32px;
+        text-align: center;
     }
 
-        .previous-page-button:hover,
-        .next-page-button:hover {
-            background-color: red;
+        .page-button:hover {
+            background: red;
             color: white;
-            text-decoration: none !important;
-            border-color: red;
+            transform: scale(1.05);
         }
+
+        .page-button.active {
+            background: red;
+            color: white;
+            font-weight: bold;
+            border: 2px solid white;
+        }
+
+    .dots {
+        color: white;
+        padding: 8px 12px;
+    }
 
     .song-image {
         width: 70px;

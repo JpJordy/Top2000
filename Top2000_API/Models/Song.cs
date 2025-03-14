@@ -25,5 +25,4 @@ namespace Top2000_API.Models
 
         public Song? Song { get; set; }
     }
-
 }

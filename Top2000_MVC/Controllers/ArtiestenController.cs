@@ -31,7 +31,6 @@ public class ArtiestenController : Controller
 
         if (!response.IsSuccessStatusCode)
         {
-            Console.WriteLine("API Error: " + response.StatusCode);
             ViewBag.Artists = new List<Top2000Artist>();
             ViewBag.TotalPages = 1;
             ViewBag.CurrentPage = 1;
@@ -43,7 +42,7 @@ public class ArtiestenController : Controller
 
         if (apiResponse == null || apiResponse.Artists.Count == 0)
         {
-            Console.WriteLine("API response is null or does not contain artists.");
+
             ViewBag.Artists = new List<Top2000Artist>();
             ViewBag.TotalPages = 1;
             ViewBag.CurrentPage = 1;

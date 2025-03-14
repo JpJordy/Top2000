@@ -20,7 +20,6 @@ namespace Top2000_MVC.Controllers
             var response = await _httpClient.GetAsync(apiUrl);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine("API Error: " + response.StatusCode);
                 ViewBag.Songs = new List<Top2000Song>();
                 ViewBag.TotalPages = 1;
                 ViewBag.CurrentPage = 1;
@@ -32,7 +31,6 @@ namespace Top2000_MVC.Controllers
 
             if (apiResponse == null || apiResponse.songs == null)
             {
-                Console.WriteLine("API response is null or does not contain 'songs'.");
                 ViewBag.Songs = new List<Top2000Song>();
                 ViewBag.TotalPages = 1;
                 ViewBag.CurrentPage = 1;

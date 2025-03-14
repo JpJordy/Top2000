@@ -42,7 +42,6 @@ public class AdminController : Controller
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Fout bij ophalen gebruikers: {ex.Message}");
             TempData["ErrorMessage"] = "Er is een fout opgetreden bij het ophalen van de gebruikers.";
             return View(new List<AdminUserWithRole>());
         }

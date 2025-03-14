@@ -236,7 +236,6 @@ namespace Top2000_API.Controllers
                 var (albumCoverUrl, durationMs, popularity, spotifyUrl) = await GetTrackInfoAsync(s.Titel, s.Artiest.Naam);
 
                 var huidigePositie = _context.Lijsten.FirstOrDefault(l => l.SongId == s.SongId && l.Jaar == top2000Year)?.Positie ?? 0;
-                Console.WriteLine(top2000Year - 1);
                 var vorigePositie = _context.Lijsten.FirstOrDefault(l => l.SongId == s.SongId && l.Jaar == (top2000Year - 1))?.Positie;
 
                 int verschil = 0;

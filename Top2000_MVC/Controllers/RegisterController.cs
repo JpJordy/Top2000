@@ -33,7 +33,6 @@ namespace Top2000_MVC.Controllers
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var contentString = await content.ReadAsStringAsync();
-            Console.WriteLine(contentString);
 
             var response = await _httpClient.PostAsync($"{_apiSettings.BaseUrl}/register", content);
 

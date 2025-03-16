@@ -57,19 +57,19 @@
 
         @if (startPage > 1)
         {
-            <a href="/Liedjes?page=1" class="page-button">1</a>
+            <a href="/Song?page=1" class="page-button">1</a>
             <span class="dots">...</span>
         }
 
         @for (int i = startPage; i <= endPage; i++)
         {
-            <a href="/Liedjes?page=@i" class="page-button @(i == currentPage ? "active" : "")">@i</a>
+            <a href="/Song?page=@i" class="page-button @(i == currentPage ? "active" : "")">@i</a>
         }
 
         @if (endPage < totalPages)
         {
             <span class="dots">...</span>
-            <a href="/Liedjes?page=@totalPages" class="page-button">@totalPages</a>
+            <a href="/Song?page=@totalPages" class="page-button">@totalPages</a>
         }
     </div>
 </div>

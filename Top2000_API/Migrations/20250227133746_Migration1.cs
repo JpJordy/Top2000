@@ -217,6 +217,62 @@ namespace Top2000_API.Migrations
                         principalColumn: "SongId",
                         onDelete: ReferentialAction.Cascade);
                 });
+            // Nieuwe tabel voor Afspeellijsten
+            migrationBuilder.CreateTable(
+                name: "Afspeellijsten",
+                columns: table => new
+                {
+                    AfspeelLijstId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Naam = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Afspeellijsten", x => x.AfspeelLijstId);
+                    table.ForeignKey(
+                        name: "FK_Afspeellijsten_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+
+            migrationBuilder.CreateTable(
+                name: "AfspeelLijstLiedjes",
+                columns: table => new
+                {
+                    AfspeelLijstId = table.Column<int>(type: "int", nullable: false),
+                    SongId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AfspeelLijstLiedjes", x => new { x.AfspeelLijstId, x.SongId });
+                    table.ForeignKey(
+                        name: "FK_AfspeelLijstLiedjes_Afspeellijsten_AfspeelLijstId",
+                        column: x => x.AfspeelLijstId,
+                        principalTable: "Afspeellijsten",
+                        principalColumn: "AfspeelLijstId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AfspeelLijstLiedjes_Songs_SongId",
+                        column: x => x.SongId,
+                        principalTable: "Songs",
+                        principalColumn: "SongId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Afspeellijsten_UserId",
+                table: "Afspeellijsten",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AfspeelLijstLiedjes_SongId",
+                table: "AfspeelLijstLiedjes",
+                column: "SongId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -271,6 +327,13 @@ namespace Top2000_API.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+    name: "AfspeelLijstLiedjes");
+
+            migrationBuilder.DropTable(
+                name: "Afspeellijsten");
+
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

@@ -14,11 +14,11 @@ public class ArtistApiResponse
 }
 
 
-public class ArtiestenController : Controller
+public class ArtistsController : Controller
 {
     private readonly HttpClient _httpClient;
 
-    public ArtiestenController(HttpClient httpClient)
+    public ArtistsController(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }

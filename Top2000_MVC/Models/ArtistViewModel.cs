@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
  
 namespace Top2000_MVC.ViewModels
 {
-    public class ArtiestViewModel
+    public class ArtistViewModel
     {
         public int ArtiestId { get; set; }
         public string Naam { get; set; }

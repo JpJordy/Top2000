@@ -73,7 +73,7 @@ public class AdminController : Controller
             return RedirectToAction("Index");
         }
 
-        var artiest = await response.Content.ReadFromJsonAsync<ArtiestViewModel>();
+        var artiest = await response.Content.ReadFromJsonAsync<ArtistViewModel>();
         return View(artiest);
     }
 
@@ -147,7 +147,7 @@ public class AdminController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> EditArtiest(ArtiestViewModel artiest)
+    public async Task<IActionResult> EditArtiest(ArtistViewModel artiest)
     {
         var updateDto = new
         {

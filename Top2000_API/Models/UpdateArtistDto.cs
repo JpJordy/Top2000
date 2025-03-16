@@ -1,6 +1,6 @@
 ﻿namespace Top2000_API.Models
 {
-    public class UpdateArtiestDto
+    public class UpdateArtistDto
     {
         public string? Wiki { get; set; }
         public string? Biografie { get; set; }

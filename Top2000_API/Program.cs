@@ -18,12 +18,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 });
 
-// Set up Identity services
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 
-// 🔹 Controllers en Swagger toevoegen
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -35,7 +35,7 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// 🔹 Middleware setup
+
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -47,10 +47,10 @@ else
     app.UseExceptionHandler("/Home/Error");
 }
 
-// 🔹 Nodige middleware toevoegen
+
 app.UseHttpsRedirection();
-app.UseRouting();  // ✅ BELANGRIJK: Routing inschakelen!
+app.UseRouting();  
 app.UseAuthorization();
-app.MapControllers();  // ✅ BELANGRIJK: Controllers correct mappen
+app.MapControllers(); 
 
 app.Run();

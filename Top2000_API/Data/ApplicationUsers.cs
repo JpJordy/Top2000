@@ -14,6 +14,6 @@ namespace Top2000_API.Data
         public string PasswordHash { get; set; }
 
         [Required]
-        public string Role { get; set; } = "User"; // Standaardrol
+        public string Role { get; set; } = "User"; 
     }
 }

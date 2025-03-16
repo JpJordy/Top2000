@@ -27,8 +27,8 @@ public class ArtistsController : ControllerBase
     // Methode om artiesteninfo van Spotify op te halen (waaronder foto)
     private async Task<ArtistDTO> GetArtistInfoAsync(string artistName)
     {
-        var clientId = "586a81230c214d4680827fa11c07357a"; // Spotify Client ID
-        var clientSecret = "8ea52916b7dc4ec8985fab26c97ca725"; // Spotify Client Secret
+        var clientId = "586a81230c214d4680827fa11c07357a"; 
+        var clientSecret = "8ea52916b7dc4ec8985fab26c97ca725"; 
 
         var authUrl = "https://accounts.spotify.com/api/token";
         var authRequestBody = new FormUrlEncodedContent(new[]
@@ -54,22 +54,22 @@ public class ArtistsController : ControllerBase
 
         if (searchResult.artists.items.Count == 0)
         {
-            return null; // Als de artiest niet gevonden wordt
+            return null; 
         }
 
         var artist = searchResult.artists.items[0];
-        var artistImage = artist.images.Count > 0 ? (string)artist.images[0].url : null; // Foto ophalen
+        var artistImage = artist.images.Count > 0 ? (string)artist.images[0].url : null; 
 
         return new ArtistDTO
         {
             Naam = artist.name,
-            Foto = artistImage, // Foto URL toevoegen aan DTO
+            Foto = artistImage, 
             Genres = artist.genres.ToObject<List<string>>() ?? new List<string>(),
-            Wiki = artist.wiki // Als wiki beschikbaar is
+            Wiki = artist.wiki 
         };
     }
 
-    // Endpoint om alle artiesten op te halen
+   
     [HttpGet("all")]
     public async Task<ActionResult<IEnumerable<Top2000Artist>>> GetAllArtists(int page = 1, int pageSize = 9)
     {
@@ -80,13 +80,13 @@ public class ArtistsController : ControllerBase
 
         var artistDtos = new List<ArtistDTO>();
 
-        // Voor elke artiest in de database, extraheer de Spotify-informatie (inclusief foto)
+        // Voor elke artiest in de database pakt die de Spotify-informatie (inclusief foto)
         foreach (var artist in artists)
         {
             var artistInfo = await GetArtistInfoAsync(artist.Naam);
             if (artistInfo != null)
             {
-                artistDtos.Add(artistInfo); // Voeg de informatie toe aan de lijst
+                artistDtos.Add(artistInfo); 
             }
         }
 

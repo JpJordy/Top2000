@@ -30,7 +30,7 @@ namespace Top2000_API.Controllers
             {
                 UserName = model.Username,
                 PasswordHash = hashedPassword,
-                Role =  "User" // Standaardrol is "User"
+                Role =  "User" 
             };
 
             _context.Users.Add(user);

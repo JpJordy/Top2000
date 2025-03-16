@@ -8,9 +8,9 @@ namespace Top2000_API.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        // Add this constructor to accept DbContextOptions
+        
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)  // Pass options to the base constructor
+            : base(options)  
         { }
 
         public DbSet<Artiest> Artiesten { get; set; } = null!;
@@ -19,6 +19,5 @@ namespace Top2000_API.Data
         public DbSet<ApplicationUser> Users { get; set; } = null!;
     }
 
-    // ApplicationUser class for Identity
-   
+
 }
